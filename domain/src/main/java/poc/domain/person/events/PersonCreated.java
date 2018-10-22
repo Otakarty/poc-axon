@@ -1,30 +1,36 @@
 package poc.domain.person.events;
 
-import poc.domain.person.FirstName;
-import poc.domain.person.Name;
+import java.time.LocalDateTime;
+
+import poc.domain.person.Person;
 import poc.domain.person.UID;
 
 public final class PersonCreated {
-	private final UID uid;
-	private final Name name;
-	private final FirstName firstName;
+    public final String eventName = this.getClass().getSimpleName();
+    private final LocalDateTime creation;
+    private final UID uid;
+    private Person person;
 
-	public PersonCreated(UID uid, Name name, FirstName firstName) {
-		this.uid = uid;
-		this.name = name;
-		this.firstName = firstName;
-	}
+    public PersonCreated(final Person person) {
+        this.uid = person.getUid();
+        this.person = person;
+        this.creation = LocalDateTime.now();
 
-	public final UID getUid() {
-		return uid;
-	}
+    }
 
-	public final Name getName() {
-		return name;
-	}
+    public final UID getUid() {
+        return this.uid;
+    }
 
-	public final FirstName getFirstName() {
-		return firstName;
-	}
+    public Person getPerson() {
+        return this.person;
+    }
 
+    public void setPerson(final Person myPerson) {
+        this.person = myPerson;
+    }
+
+    public LocalDateTime getCreation() {
+        return this.creation;
+    }
 }
