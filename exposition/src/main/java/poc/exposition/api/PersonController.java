@@ -3,6 +3,7 @@ package poc.exposition.api;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.axonframework.eventhandling.EventBus;
 import org.axonframework.eventsourcing.eventstore.EventStore;
 import org.axonframework.messaging.Message;
 import org.slf4j.Logger;
@@ -33,12 +34,14 @@ public class PersonController {
     @Autowired
     private EventStore eventStore;
 
+    @Autowired
+    private EventBus eventBus;
+
     @PostMapping
-    public PersonDTO newPerson(@RequestBody final PersonDTO person) {
+    public void newPerson(@RequestBody final PersonDTO person) {
         this.logger.info("Creating new person ", person);
         this.service.createPerson(new Person.Builder().uid(new UID(person.getUid()))
             .firstName(new FirstName(person.getFirstName())).name(new Name(person.getName())).build());
-        return person;
     }
 
     @PostMapping("{uid}/rename/{newName}")
@@ -58,7 +61,12 @@ public class PersonController {
     }
 
     @GetMapping("{uid}/events")
-    public List<Object> getEvents(@PathVariable final String uid) {
+    public List<Object> getPersonEvents(@PathVariable final String uid) {
         return this.eventStore.readEvents(uid).asStream().map(Message::getPayload).collect(Collectors.toList());
+    }
+
+    @GetMapping("/events")
+    public EventBus getEvents() {
+        return this.eventStore;
     }
 }

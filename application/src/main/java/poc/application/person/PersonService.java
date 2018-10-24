@@ -3,6 +3,7 @@ package poc.application.person;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.eventsourcing.eventstore.EventStore;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import poc.application.person.commands.ChangePersonName;
@@ -21,6 +22,7 @@ public class PersonService {
     private EventStore eventStore;
 
     @Autowired
+    @Qualifier("refog")
     private Persons repository;
 
     public void createPerson(final Person person) {
@@ -31,6 +33,7 @@ public class PersonService {
         this.commandGateway.send(new ChangePersonName(uid, newName));
     }
 
+    // TODO: read model
     public Person getPersonFromEvents(final UID uid) {
         this.eventStore.readEvents(uid.getValue()).asStream().forEach(event -> {
             System.out.println(event);

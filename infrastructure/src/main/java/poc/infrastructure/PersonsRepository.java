@@ -2,9 +2,12 @@ package poc.infrastructure;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import poc.domain.person.Person;
@@ -12,6 +15,7 @@ import poc.domain.person.Persons;
 import poc.domain.person.UID;
 
 @Repository
+@Qualifier("refog")
 public class PersonsRepository implements Persons {
 
     private static Map<UID, Person> inMemoryRepository = new HashMap<>();
@@ -37,5 +41,10 @@ public class PersonsRepository implements Persons {
             inMemoryRepository.replace(p.getUid(), person);
         }
         return person;
+    }
+
+    @Override
+    public List<Person> findAll() {
+        return inMemoryRepository.values().stream().collect(Collectors.toList());
     }
 }

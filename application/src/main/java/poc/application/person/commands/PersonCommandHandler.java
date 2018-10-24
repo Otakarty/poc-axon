@@ -1,14 +1,21 @@
 package poc.application.person.commands;
 
+import static org.axonframework.eventhandling.GenericEventMessage.asEventMessage;
+
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.commandhandling.model.Aggregate;
 import org.axonframework.commandhandling.model.AggregateLifecycle;
+import org.axonframework.commandhandling.model.AggregateNotFoundException;
 import org.axonframework.commandhandling.model.Repository;
+import org.axonframework.eventhandling.EventBus;
+import org.axonframework.messaging.annotation.MessageHandlerInvocationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import poc.application.person.commands.exceptions.CannotChangeNameException;
+import poc.application.person.commands.exceptions.CannotCreatePersonException;
 import poc.domain.person.Person;
 import poc.domain.person.events.PersonCreated;
 import poc.domain.person.events.PersonNameChanged;
@@ -20,24 +27,54 @@ public class PersonCommandHandler {
     @Autowired
     private Repository<Person> axonRepo;
 
+    @Autowired
+    private EventBus eventBus;
+
     // @Autowired
     // private Persons repository;
 
     @CommandHandler
     public void handle(final CreatePerson command) throws Exception {
         this.logger.info("Handling CreatePerson command");
+
+        // Check user not already existing
+        try {
+            this.axonRepo.load(command.getUid().getValue());
+            CannotCreatePersonException e =
+                new CannotCreatePersonException(command.getUid(), "person already exists");
+            this.eventBus.publish(asEventMessage(e));
+            this.logger.error(e.getMessage());
+            return;
+            // throw e;
+        } catch (AggregateNotFoundException e) {
+            // OK
+        }
+
         this.axonRepo.newInstance(() -> {
             AggregateLifecycle.apply(new PersonCreated(command.getPerson()));
             return command.getPerson();
         });
-        // this.repository.create(command.getPerson());
     }
 
     @CommandHandler
     public void handle(final ChangePersonName command) {
         this.logger.info("Handling ChangePersonName command");
-        Aggregate<Person> personAggregate = this.axonRepo.load(command.getUid().getValue());
-        personAggregate.execute(
-            person -> AggregateLifecycle.apply(new PersonNameChanged(command.getUid(), command.getName())));
+        try {
+            Aggregate<Person> personAggregate = this.axonRepo.load(command.getUid().getValue());
+
+            personAggregate.execute(
+                person -> AggregateLifecycle.apply(new PersonNameChanged(command.getUid(), command.getName())));
+        } catch (AggregateNotFoundException e) {
+            CannotChangeNameException ex = new CannotChangeNameException(command.getUid(), e.getMessage());
+            this.eventBus.publish(asEventMessage(ex));
+            this.logger.error(ex.getMessage());
+            // throw ex;
+        } catch (MessageHandlerInvocationException e) {
+            CannotChangeNameException ex =
+                new CannotChangeNameException(command.getUid(), e.getCause().getMessage());
+            this.eventBus.publish(asEventMessage(ex));
+            this.logger.error(ex.getMessage());
+            // throw ex;
+        }
     }
 }
