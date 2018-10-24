@@ -2,11 +2,11 @@ package poc.domain.person.events;
 
 import java.time.LocalDateTime;
 
+import poc.domain.events.DomainEvent;
 import poc.domain.person.Person;
 import poc.domain.person.UID;
 
-public final class PersonCreated {
-    public final String eventName = this.getClass().getSimpleName();
+public final class PersonCreated extends DomainEvent {
     private final LocalDateTime creation;
     private final UID uid;
     private Person person;
@@ -32,5 +32,15 @@ public final class PersonCreated {
 
     public LocalDateTime getCreation() {
         return this.creation;
+    }
+
+    @Override
+    public String getEventName() {
+        return this.getClass().getSimpleName();
+    }
+
+    @Override
+    public String toString() {
+        return "PersonCreated [creation=" + this.creation + ", uid=" + this.uid + ", person=" + this.person + "]";
     }
 }
