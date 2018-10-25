@@ -15,7 +15,6 @@ import poc.domain.person.events.PersonNameChanged;
 @Aggregate
 public class Person implements Serializable {
     private static final long serialVersionUID = -3175513689962156083L;
-    Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @AggregateIdentifier
     private UID uid;
@@ -52,6 +51,8 @@ public class Person implements Serializable {
     }
 
     /******** Event Sourcing Handlers. ********/
+    Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @EventSourcingHandler
     protected void on(final PersonCreated event) {
         this.logger.info("Event source handler on PersonCreated event");
@@ -71,7 +72,6 @@ public class Person implements Serializable {
         final int prime = 31;
         int result = 1;
         result = (prime * result) + ((this.firstName == null) ? 0 : this.firstName.hashCode());
-        result = (prime * result) + ((this.logger == null) ? 0 : this.logger.hashCode());
         result = (prime * result) + ((this.name == null) ? 0 : this.name.hashCode());
         result = (prime * result) + ((this.uid == null) ? 0 : this.uid.hashCode());
         return result;
@@ -94,13 +94,6 @@ public class Person implements Serializable {
                 return false;
             }
         } else if (!this.firstName.equals(other.firstName)) {
-            return false;
-        }
-        if (this.logger == null) {
-            if (other.logger != null) {
-                return false;
-            }
-        } else if (!this.logger.equals(other.logger)) {
             return false;
         }
         if (this.name == null) {

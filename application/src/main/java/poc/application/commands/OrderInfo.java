@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class OrderInfo {
+
     private final UUID id;
     private final LocalDateTime dtCreation;
     private final ServiceEnum source;
@@ -24,5 +25,52 @@ public class OrderInfo {
 
     public final ServiceEnum getSource() {
         return this.source;
+    }
+
+    @Override
+    public String toString() {
+        return "OrderInfo [id=" + this.id + ", dtCreation=" + this.dtCreation + ", source=" + this.source + "]";
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = (prime * result) + ((this.dtCreation == null) ? 0 : this.dtCreation.hashCode());
+        result = (prime * result) + ((this.id == null) ? 0 : this.id.hashCode());
+        result = (prime * result) + ((this.source == null) ? 0 : this.source.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (this.getClass() != obj.getClass()) {
+            return false;
+        }
+        OrderInfo other = (OrderInfo) obj;
+        if (this.dtCreation == null) {
+            if (other.dtCreation != null) {
+                return false;
+            }
+        } else if (!this.dtCreation.equals(other.dtCreation)) {
+            return false;
+        }
+        if (this.id == null) {
+            if (other.id != null) {
+                return false;
+            }
+        } else if (!this.id.equals(other.id)) {
+            return false;
+        }
+        if (this.source != other.source) {
+            return false;
+        }
+        return true;
     }
 }

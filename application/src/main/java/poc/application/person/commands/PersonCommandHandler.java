@@ -60,18 +60,18 @@ public class PersonCommandHandler {
     public void handle(final ChangePersonName command) {
         this.logger.info("Handling ChangePersonName command");
         try {
-            Aggregate<Person> personAggregate = this.axonRepo.load(command.getUid().getValue());
+            Aggregate<Person> personAggregate = this.axonRepo.load(command.getId().getValue());
 
             personAggregate.execute(
-                person -> AggregateLifecycle.apply(new PersonNameChanged(command.getUid(), command.getName())));
+                person -> AggregateLifecycle.apply(new PersonNameChanged(command.getId(), command.getName())));
         } catch (AggregateNotFoundException e) {
-            CannotChangeNameException ex = new CannotChangeNameException(command.getUid(), e.getMessage());
+            CannotChangeNameException ex = new CannotChangeNameException(command.getId(), e.getMessage());
             this.eventBus.publish(asEventMessage(ex));
             this.logger.error(ex.getMessage());
             // throw ex;
         } catch (MessageHandlerInvocationException e) {
             CannotChangeNameException ex =
-                new CannotChangeNameException(command.getUid(), e.getCause().getMessage());
+                new CannotChangeNameException(command.getId(), e.getCause().getMessage());
             this.eventBus.publish(asEventMessage(ex));
             this.logger.error(ex.getMessage());
             // throw ex;

@@ -2,16 +2,21 @@ package poc.application.person.commands;
 
 import java.util.UUID;
 
+import org.axonframework.commandhandling.CommandExecutionException;
 import org.axonframework.commandhandling.TargetAggregateIdentifier;
 import org.springframework.util.Assert;
 
-import poc.application.commands.Command;
+import poc.application.commands.CreateCommand;
 import poc.application.commands.OrderInfo;
 import poc.application.commands.ServiceEnum;
+import poc.application.person.commands.exceptions.CannotCreatePersonException;
+import poc.domain.events.DomainEvent;
 import poc.domain.person.Person;
 import poc.domain.person.UID;
+import poc.domain.person.events.PersonCreated;
 
-public final class CreatePerson extends Command {
+public final class CreatePerson extends CreateCommand<Person> {
+
     public final String commandName = this.getClass().getSimpleName();
     @TargetAggregateIdentifier
     private final UID uid;
@@ -19,7 +24,7 @@ public final class CreatePerson extends Command {
     private final Person person;
 
     public CreatePerson(final OrderInfo originOrder, final Person person) {
-        super(originOrder);
+        super(originOrder, person.getUid(), person);
         Assert.notNull(person.getUid(), "UID is mandatory");
         Assert.notNull(person.getName(), "Name is mandatory");
         Assert.notNull(person.getFirstName(), "First name is mandatory");
@@ -28,7 +33,7 @@ public final class CreatePerson extends Command {
     }
 
     public CreatePerson(final Person person) {
-        super(new OrderInfo(UUID.randomUUID(), ServiceEnum.IHM));
+        super(new OrderInfo(UUID.randomUUID(), ServiceEnum.IHM), person.getUid(), person);
         Assert.notNull(person.getUid(), "UID is mandatory");
         Assert.notNull(person.getName(), "Name is mandatory");
         Assert.notNull(person.getFirstName(), "First name is mandatory");
@@ -47,5 +52,21 @@ public final class CreatePerson extends Command {
     @Override
     public String getCommandName() {
         return this.getClass().getSimpleName();
+    }
+
+    @Override
+    protected CommandExecutionException exceptionToThrow(final String myCauseMessage) {
+        return new CannotCreatePersonException(this.uid, "Cannot create person with uid " + this.uid);
+    }
+
+    @Override
+    protected DomainEvent getDomainEvent() {
+        return new PersonCreated(this.person);
+    }
+
+    @Override
+    public String toString() {
+        return "CreatePerson [uid=" + this.uid + ", person=" + this.person + ", getDomainEvent()="
+            + this.getDomainEvent() + "]";
     }
 }

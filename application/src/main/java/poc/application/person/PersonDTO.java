@@ -1,6 +1,9 @@
 package poc.application.person;
 
+import poc.domain.person.FirstName;
+import poc.domain.person.Name;
 import poc.domain.person.Person;
+import poc.domain.person.UID;
 
 public final class PersonDTO {
 
@@ -21,6 +24,11 @@ public final class PersonDTO {
         this.uid = person.getUid().getValue();
         this.name = person.getName().getValue();
         this.firstName = person.getFirstName().getValue();
+    }
+
+    public Person toDomainEntity() {
+        return new Person.Builder().uid(new UID(this.getUid())).firstName(new FirstName(this.getFirstName()))
+            .name(new Name(this.getName())).build();
     }
 
     public final String getUid() {

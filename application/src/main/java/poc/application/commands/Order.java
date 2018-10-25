@@ -12,9 +12,10 @@ public final class Order {
     // TODO: generic id instead
     @TargetAggregateIdentifier
     private final UID id;
-    private final List<Command> commands;
+    // TODO: ? extends custom aggregate
+    private final List<Command<?>> commands;
 
-    public Order(final OrderInfo info, final List<Command> commands, final UID id) {
+    public Order(final OrderInfo info, final List<Command<?>> commands, final UID id) {
         this.info = info;
         Assert.isTrue(!commands.isEmpty(), "Should contain at least one command");
         this.commands = commands;
@@ -25,7 +26,7 @@ public final class Order {
         return this.info;
     }
 
-    public final List<Command> getCommands() {
+    public final List<Command<?>> getCommands() {
         return this.commands;
     }
 

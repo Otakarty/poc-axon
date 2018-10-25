@@ -31,7 +31,6 @@ import poc.application.commands.ServiceEnum;
 import poc.application.person.PersonDTO;
 import poc.application.person.PersonService;
 import poc.application.person.commands.ChangePersonName;
-import poc.domain.person.FirstName;
 import poc.domain.person.Name;
 import poc.domain.person.Person;
 import poc.domain.person.UID;
@@ -55,8 +54,7 @@ public class PersonController {
     @PostMapping
     public void newPerson(@RequestBody final PersonDTO person) {
         this.logger.info("Creating new person ", person);
-        this.service.createPerson(new Person.Builder().uid(new UID(person.getUid()))
-            .firstName(new FirstName(person.getFirstName())).name(new Name(person.getName())).build());
+        this.service.createPerson(person.toDomainEntity());
     }
 
     @PostMapping("{uid}/rename/{newName}")
@@ -102,7 +100,7 @@ public class PersonController {
         Name newName3 = new Name("NEWNEWNEW");
         Name newName4 = new Name("NEWNEWNEWNEW");
 
-        List<Command> commands;
+        List<Command<?>> commands;
         if (expectedStatus.equalsIgnoreCase("OK")) {
             commands = Arrays.asList(new ChangePersonName(id, newName1), new ChangePersonName(id, newName2));
         } else if (expectedStatus.equalsIgnoreCase("KO")) {

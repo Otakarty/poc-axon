@@ -2,23 +2,24 @@ package poc.application.events;
 
 import java.util.List;
 
-import poc.domain.events.DomainEvent;
+import poc.application.commands.Command;
 import poc.domain.person.UID;
 
 public final class OrderValidated {
     private final UID id;
-    private final List<DomainEvent> eventsToApply;
+    private final List<Command<?>> commandsToApply;
 
-    public OrderValidated(final UID id, final List<DomainEvent> eventsToApply) {
+    public OrderValidated(final UID id, final List<Command<?>> commandsToApply) {
         this.id = id;
-        this.eventsToApply = eventsToApply;
+        this.commandsToApply = commandsToApply;
+    }
+
+    public final List<Command<?>> getCommandsToApply() {
+        return this.commandsToApply;
     }
 
     public UID getId() {
         return this.id;
     }
 
-    public List<DomainEvent> getEventsToApply() {
-        return this.eventsToApply;
-    }
 }
