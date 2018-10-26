@@ -35,19 +35,4 @@ public final class PersonCreated extends DomainEvent {
         return "PersonCreated [creation=" + this.getCreation() + ", uid=" + this.uid + ", person=" + this.person
             + "]";
     }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = (prime * result) + ((this.getEventId() == null) ? 0 : this.getEventId().hashCode());
-        result = (prime * result) + ((this.person == null) ? 0 : this.person.hashCode());
-        result = (prime * result) + ((this.uid == null) ? 0 : this.uid.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        return true;
-    }
 }
