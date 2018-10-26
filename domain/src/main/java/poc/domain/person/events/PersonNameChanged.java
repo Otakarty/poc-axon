@@ -25,10 +25,6 @@ public final class PersonNameChanged extends DomainEvent {
         return this.name;
     }
 
-    public LocalDateTime getCreation() {
-        return this.creation;
-    }
-
     @Override
     public String getEventName() {
         return this.getClass().getSimpleName();

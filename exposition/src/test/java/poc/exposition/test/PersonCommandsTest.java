@@ -1,12 +1,19 @@
 package poc.exposition.test;
 
+import org.axonframework.commandhandling.model.Repository;
+import org.axonframework.eventhandling.EventBus;
+import org.axonframework.messaging.interceptors.BeanValidationInterceptor;
 import org.axonframework.test.aggregate.AggregateTestFixture;
 import org.axonframework.test.aggregate.FixtureConfiguration;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 
 import poc.application.person.commands.ChangePersonName;
 import poc.application.person.commands.CreatePerson;
+import poc.application.person.commands.PersonCommandHandler;
 import poc.domain.person.FirstName;
 import poc.domain.person.Name;
 import poc.domain.person.Person;
@@ -14,12 +21,29 @@ import poc.domain.person.UID;
 import poc.domain.person.events.PersonCreated;
 import poc.domain.person.events.PersonNameChanged;
 
+//@RunWith(MockitoJUnitRunner.class)
+// @SpringBootTest(classes = Application.class)
+// @AutoConfigureMockMvc
+// @TestPropertySource(locations = "classpath:application.properties")
 public class PersonCommandsTest {
     private FixtureConfiguration<Person> fixture;
+
+    @InjectMocks
+    PersonCommandHandler personCommandHandler;
+
+    @Spy
+    private Repository<Person> axonRepo;
+    @Spy
+    EventBus eventBus;
 
     @Before
     public void setUp() {
         this.fixture = new AggregateTestFixture<>(Person.class);
+        this.eventBus = this.fixture.getEventBus();
+        this.axonRepo = this.fixture.getRepository();
+        MockitoAnnotations.initMocks(this);
+        this.fixture.registerAnnotatedCommandHandler(this.personCommandHandler);
+        this.fixture.registerCommandDispatchInterceptor(new BeanValidationInterceptor<>());
     }
 
     @Test

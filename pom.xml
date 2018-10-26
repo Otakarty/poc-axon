@@ -51,6 +51,8 @@
 		<module>application</module>
 		<module>domain</module>
 		<module>infrastructure</module>
-		<module>synchro-old-refog</module>		
+		
+		
+		<module>synchro-old-refog</module>
 	</modules>
 </project>
