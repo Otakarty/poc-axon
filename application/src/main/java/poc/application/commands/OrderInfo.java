@@ -1,16 +1,17 @@
 package poc.application.commands;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public class OrderInfo {
-
+public class OrderInfo implements Serializable {
+    private static final long serialVersionUID = -6567393086766682750L;
     private final UUID id;
     private final LocalDateTime dtCreation;
     private final ServiceEnum source;
 
-    public OrderInfo(final UUID id, final ServiceEnum source) {
-        this.id = id;
+    public OrderInfo(final ServiceEnum source) {
+        this.id = UUID.randomUUID();
         this.dtCreation = LocalDateTime.now();
         this.source = source;
     }

@@ -1,5 +1,7 @@
 package poc.domain.person.events;
 
+import java.util.UUID;
+
 import poc.domain.events.DomainEvent;
 import poc.domain.person.Person;
 import poc.domain.person.UID;
@@ -8,7 +10,8 @@ public final class PersonCreated extends DomainEvent {
     private final UID uid;
     private Person person;
 
-    public PersonCreated(final Person person) {
+    public PersonCreated(final UUID commandId, final Person person) {
+        super(commandId);
         this.uid = person.getUid();
         this.person = person;
     }

@@ -13,6 +13,7 @@ import poc.domain.person.Person;
 import poc.domain.person.Persons;
 import poc.domain.person.events.PersonCreated;
 import poc.domain.person.events.PersonNameChanged;
+import poc.infrastructure.CommandRepository;
 
 // Not in domain layer because of spring annotation required
 @Component
@@ -26,12 +27,21 @@ public class PersonEventListener {
     @Autowired
     private Repository<Person> axonRepo;
 
+    // @Autowired
+    // private CommandJpaRepository commandRepository;
+
+    @Autowired
+    private CommandRepository commandRepository;
+
     @EventHandler
     protected void on(final PersonCreated event) {
         this.logger.info("Handling PersonCreated event for new refog");
         // throws exception if not found
         // Aggregate<Person> p = this.axonRepo.load(event.getUid().getValue());
         this.repository.save(event.getPerson());
+
+        // TODO: try to put this code on a generic event handler
+        this.commandRepository.finishCommand(event.getCommandId().toString());
     }
 
     @EventHandler
@@ -41,6 +51,9 @@ public class PersonEventListener {
         // Person p = this.repository.findById(event.getUid());
         // p.changeName(event.getName());
         this.axonRepo.load(event.getUid().getValue()).execute(person -> this.repository.save(person));
+
+        // TODO: try to put this code on a generic event handler
+        this.commandRepository.finishCommand(event.getCommandId().toString());
     }
 
     @EventHandler

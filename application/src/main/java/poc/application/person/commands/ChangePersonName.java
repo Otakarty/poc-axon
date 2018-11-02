@@ -1,12 +1,9 @@
 package poc.application.person.commands;
 
-import java.util.UUID;
-
 import org.axonframework.commandhandling.CommandExecutionException;
 import org.springframework.util.Assert;
 
 import poc.application.commands.OrderInfo;
-import poc.application.commands.ServiceEnum;
 import poc.application.commands.UpdateCommand;
 import poc.application.person.commands.exceptions.CannotChangeNameException;
 import poc.domain.events.DomainEvent;
@@ -25,12 +22,12 @@ public final class ChangePersonName extends UpdateCommand<Person> {
         this.name = name;
     }
 
-    public ChangePersonName(final UID uid, final Name name) {
-        super(new OrderInfo(UUID.randomUUID(), ServiceEnum.IHM), uid);
-        Assert.notNull(uid, "UID is mandatory");
-        Assert.notNull(name, "Name is mandatory");
-        this.name = name;
-    }
+    // public ChangePersonName(final UID uid, final Name name) {
+    // super(new OrderInfo(ServiceEnum.IHM), uid);
+    // Assert.notNull(uid, "UID is mandatory");
+    // Assert.notNull(name, "Name is mandatory");
+    // this.name = name;
+    // }
 
     public final Name getName() {
         return this.name;
@@ -43,12 +40,12 @@ public final class ChangePersonName extends UpdateCommand<Person> {
 
     @Override
     public CommandExecutionException exceptionToThrow(final String message) {
-        return new CannotChangeNameException(this.getId(), message);
+        return new CannotChangeNameException(this.aggregateId, this.name, message);
     }
 
     @Override
     public DomainEvent getDomainEvent() {
-        return new PersonNameChanged(this.getId(), this.name);
+        return new PersonNameChanged(this.commandId, this.aggregateId, this.name);
     }
 
     @Override
@@ -59,7 +56,7 @@ public final class ChangePersonName extends UpdateCommand<Person> {
     @Override
     public String toString() {
         return "ChangePersonName [name=" + this.name + ", getDomainEvent()=" + this.getDomainEvent()
-            + ", getOriginOrder()=" + this.getOriginOrder() + ", getId()=" + this.getId() + "]";
+            + ", getOriginOrder()=" + this.getOriginOrder() + ", getId()=" + this.getAggregateId() + "]";
     }
 
 }

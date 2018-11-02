@@ -1,5 +1,8 @@
 package poc.application.commands;
 
+import java.io.Serializable;
+import java.util.UUID;
+
 import org.axonframework.commandhandling.CommandExecutionException;
 import org.axonframework.commandhandling.TargetAggregateIdentifier;
 import org.axonframework.commandhandling.model.Aggregate;
@@ -9,23 +12,30 @@ import org.springframework.util.Assert;
 import poc.domain.events.DomainEvent;
 import poc.domain.person.UID;
 
-public abstract class Command<T> {
-    private final OrderInfo originOrder;
+public abstract class Command<T> implements Serializable {
+    private static final long serialVersionUID = -8528846602698939210L;
+    protected final UUID commandId;
+    protected final OrderInfo originOrder;
     @TargetAggregateIdentifier
-    private final UID id;
+    protected final UID aggregateId;
 
     public Command(final OrderInfo originOrder, final UID id) {
         Assert.isTrue(id != null, "In order to create command, aggregate id should not be null");
         this.originOrder = originOrder;
-        this.id = id;
+        this.commandId = UUID.randomUUID();
+        this.aggregateId = id;
     }
 
     public OrderInfo getOriginOrder() {
         return this.originOrder;
     }
 
-    public final UID getId() {
-        return this.id;
+    public final UID getAggregateId() {
+        return this.aggregateId;
+    }
+
+    public final UUID getCommandId() {
+        return this.commandId;
     }
 
     public abstract String getCommandName();
@@ -54,10 +64,18 @@ public abstract class Command<T> {
      */
     protected abstract DomainEvent getDomainEvent();
 
+    // /**
+    // * Get command args (to store into database)
+    // * @return command args
+    // */
+    // protected abstract Map<String, Object> getCommandArgs();
+
     protected Aggregate<T> loadAggregate() {
-        return Registry
-            .getRepository((Class<T>) GenericTypeResolver.resolveTypeArgument(this.getClass(), Command.class))
-            .load(this.getId().getValue());
+        return Registry.getRepository(this.getAggregateType()).load(this.getAggregateId().getValue());
+    }
+
+    public Class<T> getAggregateType() {
+        return (Class<T>) GenericTypeResolver.resolveTypeArgument(this.getClass(), Command.class);
     }
 
     /**
@@ -69,4 +87,5 @@ public abstract class Command<T> {
         this.apply();
         return this.getDomainEvent();
     }
+
 }

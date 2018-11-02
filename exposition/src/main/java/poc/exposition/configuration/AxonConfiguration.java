@@ -1,21 +1,24 @@
 package poc.exposition.configuration;
 
-import org.axonframework.eventsourcing.eventstore.EventStorageEngine;
-import org.axonframework.eventsourcing.eventstore.inmemory.InMemoryEventStorageEngine;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class AxonConfiguration {
 
-	@Bean
-	public EventStorageEngine eventStorageEngine() {
-		return new InMemoryEventStorageEngine();
-	}
+    // @Bean
+    // public EventStorageEngine eventStorageEngine() {
+    // return new InMemoryEventStorageEngine();
+    // }
 
-	// @Bean
-	// public CommandBus commandBus() {
-	// return SimpleCommandBus.builder().build();
-	// }
+    // @Autowired
+    // EntityManagerProvider entityManagerProvider;
+    //
+    // @Autowired
+    // TransactionManager transactionManager;
+    //
+    // @Bean
+    // JpaEventStorageEngine jpaEventStorageEngine() throws SQLException {
+    // return new JpaEventStorageEngine(this.entityManagerProvider, this.transactionManager);
+    // }
 
 }

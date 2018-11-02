@@ -1,6 +1,7 @@
 package poc.domain.person.events;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import poc.domain.events.DomainEvent;
 import poc.domain.person.Name;
@@ -11,7 +12,8 @@ public final class PersonNameChanged extends DomainEvent {
     private final UID uid;
     private final Name name;
 
-    public PersonNameChanged(final UID uid, final Name name) {
+    public PersonNameChanged(final UUID commandId, final UID uid, final Name name) {
+        super(commandId);
         this.uid = uid;
         this.name = name;
         this.creation = LocalDateTime.now();

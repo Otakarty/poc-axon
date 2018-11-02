@@ -5,11 +5,13 @@ import java.util.UUID;
 
 public abstract class DomainEvent {
     public final UUID eventId;
+    public final UUID commandId;
     private final LocalDateTime creation;
 
-    public DomainEvent() {
+    public DomainEvent(final UUID commandId) {
         this.eventId = UUID.randomUUID();
         this.creation = LocalDateTime.now();
+        this.commandId = commandId;
     }
 
     public final UUID getEventId() {
@@ -18,6 +20,10 @@ public abstract class DomainEvent {
 
     public final LocalDateTime getCreation() {
         return this.creation;
+    }
+
+    public final UUID getCommandId() {
+        return this.commandId;
     }
 
     public abstract String getEventName();

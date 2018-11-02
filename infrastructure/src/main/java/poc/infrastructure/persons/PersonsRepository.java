@@ -1,4 +1,4 @@
-package poc.infrastructure;
+package poc.infrastructure.persons;
 
 import java.text.MessageFormat;
 import java.util.HashMap;

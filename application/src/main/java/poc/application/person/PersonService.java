@@ -1,11 +1,17 @@
 package poc.application.person;
 
+import java.util.Collections;
+
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.eventsourcing.eventstore.EventStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import poc.application.commands.Order;
+import poc.application.commands.OrderHandler;
+import poc.application.commands.OrderInfo;
+import poc.application.commands.ServiceEnum;
 import poc.application.person.commands.ChangePersonName;
 import poc.application.person.commands.CreatePerson;
 import poc.domain.person.Name;
@@ -25,12 +31,20 @@ public class PersonService {
     @Qualifier("refog")
     private Persons repository;
 
+    // @Autowired
+    // private CommandJpaRepository commandRepository;
+
     public void createPerson(final Person person) {
-        this.commandGateway.send(new CreatePerson(person));
+        OrderInfo info = new OrderInfo(ServiceEnum.IHM);
+        CreatePerson command = new CreatePerson(info, person);
+        // this.commandRepository.save(toCommandEntry(command, "CREATED"));
+        OrderHandler.saveAndPublishOrder(new Order(info, Collections.singletonList(command), person.getUid()));
     }
 
     public void changePersonName(final UID uid, final Name newName) {
-        this.commandGateway.send(new ChangePersonName(uid, newName));
+        OrderInfo info = new OrderInfo(ServiceEnum.IHM);
+        ChangePersonName command = new ChangePersonName(info, uid, newName);
+        OrderHandler.saveAndPublishOrder(new Order(info, Collections.singletonList(command), uid));
     }
 
     // TODO: read model

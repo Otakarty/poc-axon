@@ -3,7 +3,6 @@ package poc.exposition.api;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.axonframework.commandhandling.gateway.CommandGateway;
@@ -26,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import poc.application.commands.Command;
 import poc.application.commands.Order;
+import poc.application.commands.OrderHandler;
 import poc.application.commands.OrderInfo;
 import poc.application.commands.ServiceEnum;
 import poc.application.person.PersonDTO;
@@ -93,7 +93,7 @@ public class PersonController {
 
     @PostMapping("/{uid}/test-im/{expectedStatus}")
     public void testIM(@PathVariable final String uid, @PathVariable final String expectedStatus) {
-        OrderInfo info = new OrderInfo(UUID.randomUUID(), ServiceEnum.IM);
+        OrderInfo info = new OrderInfo(ServiceEnum.IM);
         UID id = new UID(uid);
         Name newName1 = new Name("NEW");
         Name newName2 = new Name("NEWNEW");
@@ -102,14 +102,16 @@ public class PersonController {
 
         List<Command<?>> commands;
         if (expectedStatus.equalsIgnoreCase("OK")) {
-            commands = Arrays.asList(new ChangePersonName(id, newName1), new ChangePersonName(id, newName2));
+            commands =
+                Arrays.asList(new ChangePersonName(info, id, newName1), new ChangePersonName(info, id, newName2));
         } else if (expectedStatus.equalsIgnoreCase("KO")) {
-            commands = Arrays.asList(new ChangePersonName(id, newName3), new ChangePersonName(id, newName2),
-                new ChangePersonName(id, newName2), new ChangePersonName(id, newName4));
+            commands =
+                Arrays.asList(new ChangePersonName(info, id, newName3), new ChangePersonName(info, id, newName2),
+                    new ChangePersonName(info, id, newName2), new ChangePersonName(info, id, newName4));
         } else {
             throw new IllegalArgumentException("OK or KO expected");
         }
-        this.commandGateway.send(new Order(info, commands, id));
+        OrderHandler.saveAndPublishOrder(new Order(info, commands, id));
     }
 
 }
