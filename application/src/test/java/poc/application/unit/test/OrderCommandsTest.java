@@ -84,7 +84,7 @@ public class OrderCommandsTest extends AbstractCommandTest {
             .expectSuccessfulHandlerExecution()
             .expectEventsMatching(aSequenceOf(
                 aPersonCreatedEventLike(new PersonCreated(createPerson.getCommandId(), person)),
-                anOrderValidatedEventLike(new OrderValidated(uid, commandsToApply)),
+                anOrderValidatedEventLike(new OrderValidated(info.getId(), commandsToApply)),
                 aPersonNameChangedEventLike(new PersonNameChanged(createPerson.getCommandId(), uid, newName)),
                 aPersonNameChangedEventLike(new PersonNameChanged(createPerson.getCommandId(), uid, newName2))));
     }

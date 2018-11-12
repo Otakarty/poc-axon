@@ -1,15 +1,15 @@
 package poc.application.events;
 
 import java.util.List;
+import java.util.UUID;
 
 import poc.application.commands.Command;
-import poc.domain.person.UID;
 
 public final class OrderValidated {
-    private final UID id;
+    private final UUID id;
     private final List<Command<?>> commandsToApply;
 
-    public OrderValidated(final UID id, final List<Command<?>> commandsToApply) {
+    public OrderValidated(final UUID id, final List<Command<?>> commandsToApply) {
         this.id = id;
         this.commandsToApply = commandsToApply;
     }
@@ -18,7 +18,7 @@ public final class OrderValidated {
         return this.commandsToApply;
     }
 
-    public UID getId() {
+    public UUID getId() {
         return this.id;
     }
 

@@ -50,7 +50,7 @@ public class OrderHandler {
         if (inErrorCommands.isEmpty()) {
             this.eventBus.publish(asEventMessage(new OrderValidated(order.getId(), order.getCommands())));
         } else {
-            InvalidOrderException ex = new InvalidOrderException(order.getInfo(), order.getId(), inErrorCommands);
+            InvalidOrderException ex = new InvalidOrderException(order.getInfo(), inErrorCommands);
             this.eventBus.publish(asEventMessage(ex));
             this.logger.error(ex.getMessage());
         }

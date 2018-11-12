@@ -1,8 +1,8 @@
 package poc.application.commands;
 
 import java.util.List;
+import java.util.UUID;
 
-import org.axonframework.commandhandling.TargetAggregateIdentifier;
 import org.springframework.util.Assert;
 
 import poc.domain.person.UID;
@@ -10,8 +10,7 @@ import poc.domain.person.UID;
 public final class Order {
     private OrderInfo info;
     // TODO: generic id instead
-    @TargetAggregateIdentifier
-    private UID id;
+    // TODO : remove on move @TargetAggregateIdentifier on order id
     // TODO: ? extends generic aggregate
     private List<Command<?>> commands;
 
@@ -24,7 +23,6 @@ public final class Order {
         this.info = info;
         Assert.isTrue(!commands.isEmpty(), "Should contain at least one command");
         this.commands = commands;
-        this.id = id;
         this.aggregateType = commands.get(0).getAggregateType();
     }
 
@@ -36,8 +34,8 @@ public final class Order {
         return this.commands;
     }
 
-    public final UID getId() {
-        return this.id;
+    public final UUID getId() {
+        return this.getInfo().getId();
     }
 
     public final Class<?> getAggregateType() {

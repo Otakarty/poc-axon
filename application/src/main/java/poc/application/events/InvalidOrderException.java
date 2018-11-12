@@ -9,7 +9,6 @@ import org.springframework.data.util.Pair;
 
 import poc.application.commands.Command;
 import poc.application.commands.OrderInfo;
-import poc.domain.person.UID;
 
 public class InvalidOrderException extends CommandExecutionException {
 
@@ -18,9 +17,9 @@ public class InvalidOrderException extends CommandExecutionException {
     private final OrderInfo origin;
     private final Map<UUID, Pair<Command<?>, CommandExecutionException>> inErrorCommands;
 
-    public InvalidOrderException(final OrderInfo origin, final UID uid,
+    public InvalidOrderException(final OrderInfo origin,
         final Map<UUID, Pair<Command<?>, CommandExecutionException>> inErrorCommands) {
-        super(MessageFormat.format("Invalid order for uid", uid.getValue()), null);
+        super(MessageFormat.format("Invalid order ", origin.getId()), null);
         this.origin = origin;
         this.inErrorCommands = inErrorCommands;
 
