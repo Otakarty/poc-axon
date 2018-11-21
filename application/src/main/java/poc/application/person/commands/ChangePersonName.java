@@ -11,8 +11,11 @@ import poc.domain.person.Name;
 import poc.domain.person.Person;
 import poc.domain.person.UID;
 import poc.domain.person.events.PersonNameChanged;
+import poc.domain.person.events.WhiteEventException;
 
 public final class ChangePersonName extends UpdateCommand<Person> {
+    private static final long serialVersionUID = 8622131695860114204L;
+
     private final Name name;
 
     public ChangePersonName(final OrderInfo originOrder, final UID uid, final Name name) {
@@ -49,14 +52,13 @@ public final class ChangePersonName extends UpdateCommand<Person> {
     }
 
     @Override
-    public void apply(final Person p) {
-        p.changeName(this.name);
+    public void verify(final Person p) throws WhiteEventException {
+        p.nameCanBeChangedWith(this.name);
     }
 
     @Override
     public String toString() {
-        return "ChangePersonName [name=" + this.name + ", getDomainEvent()=" + this.getDomainEvent()
-            + ", getOriginOrder()=" + this.getOriginOrder() + ", getId()=" + this.getAggregateId() + "]";
+        return "ChangePersonName [name=" + this.name + ", getId()=" + this.getAggregateId() + "]";
     }
 
 }

@@ -1,6 +1,6 @@
 package poc.application.commands;
 
-import org.axonframework.commandhandling.CommandExecutionException;
+import org.axonframework.commandhandling.model.Aggregate;
 import org.axonframework.commandhandling.model.AggregateLifecycle;
 import org.axonframework.commandhandling.model.AggregateNotFoundException;
 
@@ -15,11 +15,17 @@ public abstract class CreateCommand<T> extends Command<T> {
     }
 
     @Override
-    public void apply() throws CommandExecutionException {
+    public void verify() {
         // Check user not already existing
         try {
-            this.loadAggregate();
-            throw this.exceptionToThrow("Aggregate already exists", null);
+            Aggregate<T> aggregate = this.loadAggregate();
+            aggregate.execute(root -> {
+                if (!root.equals(this.aggregate)) {
+                    throw this.exceptionToThrow("Aggregate already exists", null);
+                } else {
+                    this.generateWhiteEvent();
+                }
+            });
         } catch (AggregateNotFoundException e) {
             // OK
         }
@@ -27,12 +33,8 @@ public abstract class CreateCommand<T> extends Command<T> {
 
     @Override
     public void applyToEventStore() {
-        // Check user not already existing
-        try {
-            Registry.getRepository(this.getAggregateType()).load(this.getAggregateId().getValue());
-            throw this.exceptionToThrow("Aggregate already exists", null);
-        } catch (AggregateNotFoundException e) {
-            // OK
+        if (this.generateWhiteEvent) {
+            return;
         }
 
         try {

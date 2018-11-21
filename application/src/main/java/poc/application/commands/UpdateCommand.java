@@ -5,19 +5,28 @@ import org.axonframework.commandhandling.model.AggregateLifecycle;
 import org.axonframework.commandhandling.model.AggregateNotFoundException;
 
 import poc.domain.person.UID;
+import poc.domain.person.events.WhiteEventException;
 
 public abstract class UpdateCommand<T> extends Command<T> {
+
+    private static final long serialVersionUID = -4334780840288000812L;
 
     public UpdateCommand(final OrderInfo originOrder, final UID id) {
         super(originOrder, id);
     }
 
-    public abstract void apply(T aggregate) throws CommandExecutionException;
+    public abstract void verify(T aggregate) throws WhiteEventException;
 
     @Override
-    public void apply() throws CommandExecutionException {
+    public void verify() {
         try {
-            this.loadAggregate().execute(person -> this.apply(person));
+            this.loadAggregate().execute(person -> {
+                try {
+                    this.verify(person);
+                } catch (WhiteEventException e) {
+                    this.generateWhiteEvent();
+                }
+            });
         } catch (AggregateNotFoundException | IllegalArgumentException e) {
             throw this.exceptionToThrow(e.getMessage(), e);
         }
@@ -25,6 +34,14 @@ public abstract class UpdateCommand<T> extends Command<T> {
 
     @Override
     public void applyToEventStore() {
-        this.loadAggregate().execute(person -> AggregateLifecycle.apply(this.getDomainEvent()));
+        if (this.generateWhiteEvent) {
+            return;
+        }
+
+        try {
+            this.loadAggregate().execute(person -> AggregateLifecycle.apply(this.getDomainEvent()));
+        } catch (Exception e) {
+            throw new CommandExecutionException(e.getCause().getMessage(), e.getCause());
+        }
     }
 }

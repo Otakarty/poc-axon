@@ -31,15 +31,6 @@ public final class CreatePerson extends CreateCommand<Person> {
         this.person = person;
     }
 
-    // public CreatePerson(final Person person) {
-    // super(new OrderInfo(ServiceEnum.IHM), person.getUid(), person);
-    // Assert.notNull(person.getUid(), "UID is mandatory");
-    // Assert.notNull(person.getName(), "Name is mandatory");
-    // Assert.notNull(person.getFirstName(), "First name is mandatory");
-    // this.uid = person.getUid();
-    // this.person = person;
-    // }
-
     public final UID getUid() {
         return this.uid;
     }
@@ -65,7 +56,6 @@ public final class CreatePerson extends CreateCommand<Person> {
 
     @Override
     public String toString() {
-        return "CreatePerson [uid=" + this.uid + ", person=" + this.person + ", getDomainEvent()="
-            + this.getDomainEvent() + "]";
+        return "CreatePerson [uid=" + this.uid + ", person=" + this.person + "]";
     }
 }

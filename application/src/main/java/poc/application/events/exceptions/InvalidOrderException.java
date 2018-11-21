@@ -19,7 +19,7 @@ public class InvalidOrderException extends CommandExecutionException {
 
     public InvalidOrderException(final OrderInfo origin,
         final Map<UUID, Pair<Command<?>, CommandExecutionException>> inErrorCommands) {
-        super(MessageFormat.format("Invalid order ", origin.getId()), null);
+        super(MessageFormat.format("Invalid order {0}, causes: {1}", origin.getId(), inErrorCommands), null);
         this.origin = origin;
         this.inErrorCommands = inErrorCommands;
 

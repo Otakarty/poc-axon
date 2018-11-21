@@ -33,11 +33,15 @@ public class Person implements Serializable {
         this.firstName = builder.getFirstName();
     }
 
-    public void changeName(final Name newName) {
+    public void nameCanBeChangedWith(final Name newName) throws WhiteEventException {
         Assert.isTrue(newName != null, "New name should not be null");
         if (this.getName().equals(newName)) {
             throw new WhiteEventException("new name is no different");
         }
+    }
+
+    public void changeName(final Name newName) throws WhiteEventException {
+        this.nameCanBeChangedWith(newName);
         this.name = newName;
     }
 
@@ -65,7 +69,7 @@ public class Person implements Serializable {
     }
 
     @EventSourcingHandler
-    protected void on(final PersonNameChanged event) {
+    protected void on(final PersonNameChanged event) throws WhiteEventException {
         this.logger.info("Event source handler on PersonNameChanged event");
         this.changeName(event.getName());
     }

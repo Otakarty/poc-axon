@@ -40,7 +40,7 @@ public class OrderHandler {
 
         order.getCommands().stream().forEach(command -> {
             try {
-                command.apply();
+                command.verify();
             } catch (CommandExecutionException e) {
                 inErrorCommands.put(command.getCommandId(), Pair.of(command, e));
             }
@@ -55,6 +55,10 @@ public class OrderHandler {
             });
             if (inErrorCommands.isEmpty()) {
                 this.eventBus.publish(asEventMessage(new OrderValidated(order.getId(), order.getCommands())));
+            } else {
+                InvalidOrderException ex = new InvalidOrderException(order.getInfo(), inErrorCommands);
+                this.eventBus.publish(asEventMessage(ex));
+                this.logger.error(ex.getMessage());
             }
         } else {
             InvalidOrderException ex = new InvalidOrderException(order.getInfo(), inErrorCommands);

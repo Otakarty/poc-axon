@@ -2,7 +2,7 @@ package poc.domain.person.events;
 
 import java.text.MessageFormat;
 
-public class WhiteEventException extends RuntimeException {
+public class WhiteEventException extends Exception {
     private static final long serialVersionUID = 1210476562238655136L;
 
     public WhiteEventException(final String cause) {
