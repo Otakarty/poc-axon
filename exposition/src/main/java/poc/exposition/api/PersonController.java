@@ -25,8 +25,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import poc.application.commands.Command;
 import poc.application.commands.Order;
-import poc.application.commands.OrderHandler;
 import poc.application.commands.OrderInfo;
+import poc.application.commands.Registry;
 import poc.application.commands.ServiceEnum;
 import poc.application.person.PersonDTO;
 import poc.application.person.PersonService;
@@ -111,7 +111,8 @@ public class PersonController {
         } else {
             throw new IllegalArgumentException("OK or KO expected");
         }
-        OrderHandler.saveAndPublishOrder(new Order(info, commands, id));
+        Registry.getCommandGateway().send(new Order(info, commands));
+        // OrderHandler.saveAndPublishOrder(new Order(info, commands, id));
     }
 
 }

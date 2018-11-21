@@ -19,26 +19,30 @@ public abstract class CreateCommand<T> extends Command<T> {
         // Check user not already existing
         try {
             this.loadAggregate();
-            throw this.exceptionToThrow("Aggregate already exists");
+            throw this.exceptionToThrow("Aggregate already exists", null);
         } catch (AggregateNotFoundException e) {
             // OK
         }
     }
 
     @Override
-    public void applyToEventStore() throws Exception {
+    public void applyToEventStore() {
         // Check user not already existing
         try {
             Registry.getRepository(this.getAggregateType()).load(this.getAggregateId().getValue());
-            throw this.exceptionToThrow("Aggregate already exists");
+            throw this.exceptionToThrow("Aggregate already exists", null);
         } catch (AggregateNotFoundException e) {
             // OK
         }
 
-        Registry.getRepository(this.getAggregateType()).newInstance(() -> {
-            AggregateLifecycle.apply(this.getDomainEvent());
-            return this.aggregate;
-        });
+        try {
+            Registry.getRepository(this.getAggregateType()).newInstance(() -> {
+                AggregateLifecycle.apply(this.getDomainEvent());
+                return this.aggregate;
+            });
+        } catch (Exception e) {
+            throw this.exceptionToThrow(e.getMessage(), e);
+        }
     }
 
 }

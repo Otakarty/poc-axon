@@ -5,8 +5,6 @@ import java.util.UUID;
 
 import org.springframework.util.Assert;
 
-import poc.domain.person.UID;
-
 public final class Order {
     private OrderInfo info;
     // TODO: generic id instead
@@ -19,7 +17,7 @@ public final class Order {
     public Order() {
     }
 
-    public Order(final OrderInfo info, final List<Command<?>> commands, final UID id) {
+    public Order(final OrderInfo info, final List<Command<?>> commands) {
         this.info = info;
         Assert.isTrue(!commands.isEmpty(), "Should contain at least one command");
         this.commands = commands;

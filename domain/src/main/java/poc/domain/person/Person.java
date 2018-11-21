@@ -11,6 +11,7 @@ import org.springframework.util.Assert;
 
 import poc.domain.person.events.PersonCreated;
 import poc.domain.person.events.PersonNameChanged;
+import poc.domain.person.events.WhiteEventException;
 
 @Aggregate
 public class Person implements Serializable {
@@ -34,7 +35,9 @@ public class Person implements Serializable {
 
     public void changeName(final Name newName) {
         Assert.isTrue(newName != null, "New name should not be null");
-        Assert.isTrue(!this.getName().equals(newName), "New name should be different");
+        if (this.getName().equals(newName)) {
+            throw new WhiteEventException("new name is no different");
+        }
         this.name = newName;
     }
 
@@ -66,6 +69,8 @@ public class Person implements Serializable {
         this.logger.info("Event source handler on PersonNameChanged event");
         this.changeName(event.getName());
     }
+
+    /****** End Event Sourcing Handlers. ******/
 
     @Override
     public int hashCode() {

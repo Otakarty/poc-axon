@@ -54,8 +54,8 @@ public final class CreatePerson extends CreateCommand<Person> {
     }
 
     @Override
-    protected CommandExecutionException exceptionToThrow(final String myCauseMessage) {
-        return new CannotCreatePersonException(this.uid, myCauseMessage);
+    protected CommandExecutionException exceptionToThrow(final String causeMessage, final Throwable cause) {
+        return new CannotCreatePersonException(this.uid, causeMessage, cause);
     }
 
     @Override

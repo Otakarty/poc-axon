@@ -1,4 +1,4 @@
-package poc.application.events;
+package poc.application.events.exceptions;
 
 import java.text.MessageFormat;
 import java.util.Map;

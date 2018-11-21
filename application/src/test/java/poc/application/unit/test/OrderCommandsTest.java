@@ -76,7 +76,7 @@ public class OrderCommandsTest extends AbstractCommandTest {
         ChangePersonName changeName1 = new ChangePersonName(info, uid, newName);
         ChangePersonName changeName2 = new ChangePersonName(info, uid, newName2);
         List<Command<?>> commandsToApply = Arrays.asList(changeName1, changeName2);
-        Order order = new Order(new OrderInfo(ServiceEnum.IM), commandsToApply, uid);
+        Order order = new Order(new OrderInfo(ServiceEnum.IM), commandsToApply);
 
         this.personFixture.givenNoPriorActivity().when(createPerson);
 

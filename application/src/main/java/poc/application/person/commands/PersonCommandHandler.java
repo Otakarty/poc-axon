@@ -41,7 +41,7 @@ public class PersonCommandHandler {
         try {
             this.axonRepo.load(command.getUid().getValue());
             CannotCreatePersonException e =
-                new CannotCreatePersonException(command.getUid(), "person already exists");
+                new CannotCreatePersonException(command.getUid(), "person already exists", null);
             this.eventBus.publish(asEventMessage(e));
             this.logger.error(e.getMessage());
             return;
@@ -66,16 +66,14 @@ public class PersonCommandHandler {
                 new PersonNameChanged(command.getCommandId(), command.getAggregateId(), command.getName())));
         } catch (AggregateNotFoundException e) {
             CannotChangeNameException ex =
-                new CannotChangeNameException(command.getAggregateId(), command.getName(), e.getMessage());
+                new CannotChangeNameException(command.getAggregateId(), command.getName(), e.getMessage(), e);
             this.eventBus.publish(asEventMessage(ex));
             this.logger.error(ex.getMessage());
-            // throw ex;
         } catch (MessageHandlerInvocationException e) {
             CannotChangeNameException ex = new CannotChangeNameException(command.getAggregateId(),
-                command.getName(), e.getCause().getMessage());
+                command.getName(), e.getCause().getMessage(), e);
             this.eventBus.publish(asEventMessage(ex));
             this.logger.error(ex.getMessage());
-            // throw ex;
         }
     }
 }

@@ -39,8 +39,8 @@ public final class ChangePersonName extends UpdateCommand<Person> {
     }
 
     @Override
-    public CommandExecutionException exceptionToThrow(final String message) {
-        return new CannotChangeNameException(this.aggregateId, this.name, message);
+    public CommandExecutionException exceptionToThrow(final String message, final Throwable cause) {
+        return new CannotChangeNameException(this.aggregateId, this.name, message, cause);
     }
 
     @Override
@@ -49,7 +49,7 @@ public final class ChangePersonName extends UpdateCommand<Person> {
     }
 
     @Override
-    public void apply(final Person p) throws RuntimeException {
+    public void apply(final Person p) {
         p.changeName(this.name);
     }
 

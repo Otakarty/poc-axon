@@ -5,7 +5,6 @@ import static org.axonframework.eventhandling.GenericEventMessage.asEventMessage
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.axonframework.commandhandling.CommandExecutionException;
 import org.axonframework.commandhandling.CommandHandler;
@@ -16,8 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
 
-import poc.application.events.InvalidOrderException;
 import poc.application.events.OrderValidated;
+import poc.application.events.exceptions.InvalidOrderException;
 
 @Component
 public class OrderHandler {
@@ -26,13 +25,13 @@ public class OrderHandler {
     @Autowired
     private EventBus eventBus;
 
-    public static void saveAndPublishOrder(final Order order) {
-        Registry.getCommandRepository()
-            .saveAll(order.getCommands().stream()
-                .map(command -> CommandAdapter.toCommandEntry(command, CommandStatus.CREATED))
-                .collect(Collectors.toList()));
-        Registry.getCommandGateway().send(order);
-    }
+    // public static void saveAndPublishOrder(final Order order) {
+    // Registry.getCommandRepository()
+    // .saveAll(order.getCommands().stream()
+    // .map(command -> CommandAdapter.toCommandEntry(command, CommandStatus.CREATED))
+    // .collect(Collectors.toList()));
+    // Registry.getCommandGateway().send(order);
+    // }
 
     @CommandHandler
     public void handle(final Order order) {
@@ -46,9 +45,17 @@ public class OrderHandler {
                 inErrorCommands.put(command.getCommandId(), Pair.of(command, e));
             }
         });
-
         if (inErrorCommands.isEmpty()) {
-            this.eventBus.publish(asEventMessage(new OrderValidated(order.getId(), order.getCommands())));
+            order.getCommands().forEach(command -> {
+                try {
+                    command.applyToEventStore();
+                } catch (CommandExecutionException e) {
+                    inErrorCommands.put(command.getCommandId(), Pair.of(command, e));
+                }
+            });
+            if (inErrorCommands.isEmpty()) {
+                this.eventBus.publish(asEventMessage(new OrderValidated(order.getId(), order.getCommands())));
+            }
         } else {
             InvalidOrderException ex = new InvalidOrderException(order.getInfo(), inErrorCommands);
             this.eventBus.publish(asEventMessage(ex));

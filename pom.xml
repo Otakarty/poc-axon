@@ -15,8 +15,45 @@
 		<version>2.0.5.RELEASE</version>
 	</parent>
 
+	<properties>
+		<java.version>1.8</java.version>
+	</properties>
+
+
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>exposition</artifactId>
+				<version>${project.version}</version>
+				<type>war</type>
+			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>application</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>domain</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>infrastructure</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>synchro-old-refog</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>feedback</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+		
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-core</artifactId>
@@ -47,19 +84,12 @@
 		</dependencies>
 	</dependencyManagement>
 
-	<properties>
-		<java.version>1.8</java.version>
-	</properties>
-
-
-
 	<modules>
 		<module>exposition</module>
 		<module>application</module>
 		<module>domain</module>
 		<module>infrastructure</module>
-
-
 		<module>synchro-old-refog</module>
+		<module>feedback</module>
 	</modules>
 </project>

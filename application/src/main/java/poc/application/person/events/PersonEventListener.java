@@ -40,8 +40,8 @@ public class PersonEventListener {
         // Aggregate<Person> p = this.axonRepo.load(event.getUid().getValue());
         this.repository.save(event.getPerson());
 
-        // TODO: try to put this code on a generic event handler
-        this.commandRepository.finishCommand(event.getCommandId().toString());
+        // // TODO: try to put this code on a generic event handler
+        // this.commandRepository.finishCommand(event.getCommandId().toString());
     }
 
     @EventHandler
@@ -52,8 +52,8 @@ public class PersonEventListener {
         // p.changeName(event.getName());
         this.axonRepo.load(event.getUid().getValue()).execute(person -> this.repository.save(person));
 
-        // TODO: try to put this code on a generic event handler
-        this.commandRepository.finishCommand(event.getCommandId().toString());
+        // // TODO: try to put this code on a generic event handler
+        // this.commandRepository.finishCommand(event.getCommandId().toString());
     }
 
     @EventHandler

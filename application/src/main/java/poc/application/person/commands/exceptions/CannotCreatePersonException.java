@@ -10,8 +10,8 @@ public class CannotCreatePersonException extends CommandExecutionException {
 
     private static final long serialVersionUID = 3438817549472277168L;
 
-    public CannotCreatePersonException(final UID uid, final String message) {
+    public CannotCreatePersonException(final UID uid, final String message, final Throwable cause) {
         super(MessageFormat.format("Cannot create person with uid {0}, cause: {1}", uid.getValue(), message),
-            null);
+            cause);
     }
 }

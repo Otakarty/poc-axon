@@ -44,7 +44,7 @@ public abstract class Command<T> implements Serializable {
      * Apply command to event store
      * @throws Exception
      */
-    public abstract void applyToEventStore() throws Exception;
+    public abstract void applyToEventStore() throws CommandExecutionException;
 
     /**
      * Apply command.
@@ -56,7 +56,8 @@ public abstract class Command<T> implements Serializable {
      * @param causeMessage cause exception message
      * @return the exception
      */
-    protected abstract CommandExecutionException exceptionToThrow(final String causeMessage);
+    protected abstract CommandExecutionException exceptionToThrow(final String causeMessage,
+        final Throwable cause);
 
     /**
      * Domain event to create if command succeeds.

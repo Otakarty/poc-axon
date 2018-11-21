@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import poc.application.commands.Order;
-import poc.application.commands.OrderHandler;
 import poc.application.commands.OrderInfo;
+import poc.application.commands.Registry;
 import poc.application.commands.ServiceEnum;
 import poc.application.person.commands.ChangePersonName;
 import poc.application.person.commands.CreatePerson;
@@ -38,13 +38,15 @@ public class PersonService {
         OrderInfo info = new OrderInfo(ServiceEnum.IHM);
         CreatePerson command = new CreatePerson(info, person);
         // this.commandRepository.save(toCommandEntry(command, "CREATED"));
-        OrderHandler.saveAndPublishOrder(new Order(info, Collections.singletonList(command), person.getUid()));
+        Registry.getCommandGateway().send(new Order(info, Collections.singletonList(command)));
+        // OrderHandler.saveAndPublishOrder(new Order(info, Collections.singletonList(command), person.getUid()));
     }
 
     public void changePersonName(final UID uid, final Name newName) {
         OrderInfo info = new OrderInfo(ServiceEnum.IHM);
         ChangePersonName command = new ChangePersonName(info, uid, newName);
-        OrderHandler.saveAndPublishOrder(new Order(info, Collections.singletonList(command), uid));
+        Registry.getCommandGateway().send(new Order(info, Collections.singletonList(command)));
+        // OrderHandler.saveAndPublishOrder(new Order(info, Collections.singletonList(command), uid));
     }
 
     // TODO: read model

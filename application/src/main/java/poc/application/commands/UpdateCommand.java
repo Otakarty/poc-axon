@@ -19,7 +19,7 @@ public abstract class UpdateCommand<T> extends Command<T> {
         try {
             this.loadAggregate().execute(person -> this.apply(person));
         } catch (AggregateNotFoundException | IllegalArgumentException e) {
-            throw this.exceptionToThrow(e.getMessage());
+            throw this.exceptionToThrow(e.getMessage(), e);
         }
     }
 

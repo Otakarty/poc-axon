@@ -1,4 +1,4 @@
-package poc.application.events;
+package poc.feedback;
 
 import java.util.List;
 import java.util.UUID;
@@ -8,13 +8,13 @@ import org.axonframework.eventhandling.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
 
 import poc.application.commands.Command;
 import poc.application.commands.CommandStatus;
-import poc.domain.person.Persons;
+import poc.application.events.OrderValidated;
+import poc.application.events.exceptions.InvalidOrderException;
 import poc.infrastructure.CommandEntry;
 import poc.infrastructure.CommandJpaRepository;
 
@@ -23,24 +23,13 @@ public class OrderEventListener {
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    @Qualifier("refog")
-    private Persons repository;
-
-    @Autowired
     private CommandJpaRepository commandJpaRepository;
 
     @EventHandler
     protected void on(final OrderValidated event) {
-        this.logger.info("Handling OrderValidated event for new refog");
+        this.logger.info("Feedback : Handling OrderValidated event");
 
-        event.getCommandsToApply().forEach(command -> {
-            try {
-                command.applyToEventStore();
-            } catch (Exception e) {
-                // TODO : handle error
-                e.printStackTrace();
-            }
-        });
+        // TODO: save Order status FINISHED
     }
 
     @EventHandler
@@ -59,6 +48,7 @@ public class OrderEventListener {
                 command.setDetail(commandInError.getSecond().getMessage());
             }
         });
-        this.commandJpaRepository.saveAll(invalidCommands);
+        // TODO: save order status to FAILED instead of commands
+        // this.commandJpaRepository.saveAll(invalidCommands);
     }
 }
