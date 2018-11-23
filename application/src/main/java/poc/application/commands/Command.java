@@ -41,7 +41,9 @@ public abstract class Command<T> implements Serializable {
         return this.commandId;
     }
 
-    public abstract String getCommandName();
+    public String getCommandName() {
+        return this.getClass().getSimpleName();
+    }
 
     /**
      * Apply command to event store

@@ -2,17 +2,19 @@ package poc.exposition.api;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import org.axonframework.commandhandling.gateway.CommandGateway;
-import org.axonframework.commandhandling.model.Aggregate;
 import org.axonframework.commandhandling.model.Repository;
 import org.axonframework.eventhandling.EventBus;
-import org.axonframework.eventhandling.TrackedEventMessage;
 import org.axonframework.eventsourcing.AggregateFactory;
 import org.axonframework.eventsourcing.eventstore.EventStore;
 import org.axonframework.messaging.Message;
+import org.axonframework.queryhandling.GenericQueryMessage;
+import org.axonframework.queryhandling.QueryBus;
+import org.axonframework.queryhandling.QueryHandler;
+import org.axonframework.queryhandling.responsetypes.ResponseTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,24 +70,54 @@ public class PersonController {
         return this.service.getPersonSnapshot(new UID(uid));
     }
 
+    @GetMapping("/count")
+    public Long getPersonsCount() {
+        return this.service.getPersonsCount();
+    }
+
+    @GetMapping("{uid}")
+    public PersonDTO findPersonsById(@PathVariable final String uid) {
+        return this.service.findById(new UID(uid));
+    }
+
+    // @GetMapping("findbyFirstName/{firstName}")
+    // public List<PersonDTO> findPersonsByFirstName(final String firstName) {
+    // return this.service
+    // }
+
+    /*********** Get user from axon repository. *************/
+    // TODO: remove
     @Autowired
     Repository<Person> personsRepository;
+    @Autowired
+    QueryBus queryBus;
 
-    @GetMapping("/{uid}")
-    public Aggregate<Person> getPersonFromEvents(@PathVariable final String uid) {
+    // TODO: preferred way is to use query models instead of querying EventStore directly
+    @GetMapping("/{uid}/axon")
+    public Person getPersonFromEvents(@PathVariable final String uid)
+        throws InterruptedException, ExecutionException {
         // return this.service.getPersonFromEvents(new UID(uid));
-        return this.personsRepository.load(uid);
+        // (1) create a query message
+        GenericQueryMessage<String, Person> query =
+            new GenericQueryMessage<>(uid, ResponseTypes.instanceOf(Person.class));
+        // (2) send a query message and print query response
+        return this.queryBus.query(query).get().getPayload();
+
     }
+
+    @QueryHandler
+    public Person handleGetPerson(final String uid) {
+        Person p = new Person();
+        this.personsRepository.load(uid).execute(person -> p.copy(person));
+        return p;
+    }
+
+    /********** End Get user from axon repository. ***********/
 
     @GetMapping("{uid}/events")
     public List<Object> getPersonEvents(@PathVariable final String uid) {
-        return this.eventStore.readEvents(uid).asStream().map(Message::getPayload).collect(Collectors.toList());
-    }
-
-    // TODO: preferred way is to use query models instead of querying EventStore directly
-    @GetMapping("/last-event")
-    public Optional<TrackedEventMessage<?>> getLastEvents() {
-        return this.eventStore.openStream(null).asStream().findFirst();
+        return this.eventStore.readEvents(uid).asStream().filter(event -> event.getTimestamp().getNano() > 0)
+            .map(Message::getPayload).collect(Collectors.toList());
     }
 
     @Autowired

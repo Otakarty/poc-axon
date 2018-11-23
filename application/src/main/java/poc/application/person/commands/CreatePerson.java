@@ -40,11 +40,6 @@ public final class CreatePerson extends CreateCommand<Person> {
     }
 
     @Override
-    public String getCommandName() {
-        return this.getClass().getSimpleName();
-    }
-
-    @Override
     protected CommandExecutionException exceptionToThrow(final String causeMessage, final Throwable cause) {
         return new CannotCreatePersonException(this.uid, causeMessage, cause);
     }

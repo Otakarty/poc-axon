@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import poc.domain.person.Person;
-import poc.domain.person.UID;
 
 @RestController
 @RequestMapping("/persons/old-refog")
@@ -25,11 +24,11 @@ public class PersonOldRefogController {
 
     @GetMapping("/{uid}")
     public Person getPerson(@PathVariable final String uid) {
-        return this.repository.findById(new UID(uid));
+        return null;// this.repository.findById(new UID(uid));
     }
 
     @GetMapping
     public List<Person> getAllPersons() {
-        return this.repository.findAll();
+        return null;// this.repository.findAll();
     }
 }

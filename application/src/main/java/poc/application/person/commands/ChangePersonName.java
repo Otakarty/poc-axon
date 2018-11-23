@@ -37,11 +37,6 @@ public final class ChangePersonName extends UpdateCommand<Person> {
     }
 
     @Override
-    public String getCommandName() {
-        return this.getClass().getSimpleName();
-    }
-
-    @Override
     public CommandExecutionException exceptionToThrow(final String message, final Throwable cause) {
         return new CannotChangeNameException(this.aggregateId, this.name, message, cause);
     }

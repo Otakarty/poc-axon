@@ -43,4 +43,9 @@ public class Application {
         return new CachingEventSourcingRepository<>(new GenericAggregateFactory<>(Sale.class), eventStore, cache, snapshotTriggerDefinition);
     }
 
+    @Autowired
+    public void configureProcessors(EventHandlingConfiguration eventHandlingConfiguration) {
+        eventHandlingConfiguration.usingTrackingProcessors();
+        eventHandlingConfiguration.registerTrackingProcessor("myProcessor");
+    }
 }

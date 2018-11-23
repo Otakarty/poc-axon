@@ -22,9 +22,16 @@ public class Person implements Serializable {
     private Name name;
     private FirstName firstName;
 
-    // Mandatory
+    // Mandatory for fixture test
     public Person() {
 
+    }
+
+    // TODO: to remove, used to get person from Axon repo load
+    public void copy(final Person other) {
+        this.uid = other.getUid();
+        this.firstName = other.getFirstName();
+        this.name = other.getName();
     }
 
     public Person(final Person.Builder builder) {
