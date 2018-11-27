@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import poc.application.commands.CommandWrapper;
 import poc.application.commands.Order;
 import poc.application.commands.OrderInfo;
 import poc.application.commands.Registry;
@@ -49,7 +50,7 @@ public class PersonService {
     public void changePersonName(final UID uid, final Name newName) {
         OrderInfo info = new OrderInfo(ServiceEnum.IHM);
         ChangePersonName command = new ChangePersonName(info, uid, newName);
-        Registry.getCommandGateway().send(new Order(info, Collections.singletonList(command)));
+        Registry.getCommandGateway().send(new CommandWrapper(command));
         // OrderHandler.saveAndPublishOrder(new Order(info, Collections.singletonList(command), uid));
     }
 

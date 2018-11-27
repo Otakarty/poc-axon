@@ -12,7 +12,6 @@ import org.axonframework.messaging.annotation.MessageHandlerInvocationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import poc.application.person.commands.exceptions.CannotChangeNameException;
 import poc.application.person.commands.exceptions.CannotCreatePersonException;
@@ -20,7 +19,7 @@ import poc.domain.person.Person;
 import poc.domain.person.events.PersonCreated;
 import poc.domain.person.events.PersonNameChanged;
 
-@Component
+//@Component
 public class PersonCommandHandler {
     Logger logger = LoggerFactory.getLogger(this.getClass());
 

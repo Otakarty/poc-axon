@@ -41,7 +41,10 @@ public abstract class UpdateCommand<T> extends Command<T> {
         try {
             this.loadAggregate().execute(person -> AggregateLifecycle.apply(this.getDomainEvent()));
         } catch (Exception e) {
-            throw new CommandExecutionException(e.getCause().getMessage(), e.getCause());
+            // If white event, nothing to do
+            if (!(e.getCause() instanceof WhiteEventException)) {
+                throw new CommandExecutionException(e.getCause().getMessage(), e.getCause());
+            }
         }
     }
 }

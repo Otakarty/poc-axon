@@ -23,6 +23,8 @@ public class Application {
     // Processors for event replay
     @Autowired
     public void configureProcessors(final EventProcessingConfiguration eventProcessingConfiguration) {
-        eventProcessingConfiguration.usingTrackingProcessors().registerTrackingEventProcessor("personsProcessor");
+        eventProcessingConfiguration.usingTrackingProcessors().registerTrackingEventProcessor("personsProcessor")
+            .registerTrackingEventProcessor("ordersProcessor")
+            .registerTrackingEventProcessor("feedbacksProcessor");
     }
 }

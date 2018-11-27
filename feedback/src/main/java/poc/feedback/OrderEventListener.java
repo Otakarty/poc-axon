@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.axonframework.commandhandling.CommandExecutionException;
+import org.axonframework.config.ProcessingGroup;
 import org.axonframework.eventhandling.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,7 @@ import poc.infrastructure.CommandEntry;
 import poc.infrastructure.CommandJpaRepository;
 
 @Component
+@ProcessingGroup("feedbacksProcessor")
 public class OrderEventListener {
     Logger logger = LoggerFactory.getLogger(this.getClass());
 

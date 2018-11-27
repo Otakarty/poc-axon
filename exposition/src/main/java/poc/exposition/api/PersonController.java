@@ -50,6 +50,7 @@ public class PersonController {
 
     @Autowired
     private EventBus eventBus;
+
     @Autowired
     private AggregateFactory<Person> personFactory;
 
@@ -130,7 +131,7 @@ public class PersonController {
         Name newName1 = new Name("NEW");
         Name newName2 = new Name("NEWNEW");
         Name newName3 = new Name("NEWNEWNEW");
-        Name newName4 = new Name("NEWNEWNEWNEW");
+        Name newName4 = new Name("ERROR");
 
         List<Command<?>> commands;
         if (expectedStatus.equalsIgnoreCase("OK")) {
@@ -143,8 +144,16 @@ public class PersonController {
         } else {
             throw new IllegalArgumentException("OK or KO expected");
         }
+
         Registry.getCommandGateway().send(new Order(info, commands));
-        // OrderHandler.saveAndPublishOrder(new Order(info, commands, id));
+        // // Not working, need to rethrow the InvalidOrder through an InvalidateOrderCommand
+        // try {
+        // Registry.getCommandGateway().send(new Order(info, commands));
+        // } catch (InvalidOrderException e) {
+        // this.logger.info("Publishing invalid order event");
+        // this.eventBus.publish(asEventMessage(e));
+        // }
+        // // OrderHandler.saveAndPublishOrder(new Order(info, commands, id));
     }
 
 }
