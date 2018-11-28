@@ -12,7 +12,7 @@ public final class PersonCreated extends DomainEvent {
 
     public PersonCreated(final UUID commandId, final Person person) {
         super(commandId);
-        this.uid = person.getUid();
+        this.uid = person.getId();
         this.person = person;
     }
 

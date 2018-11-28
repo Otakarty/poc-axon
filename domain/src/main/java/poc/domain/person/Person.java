@@ -14,7 +14,7 @@ import poc.domain.person.events.PersonNameChanged;
 import poc.domain.person.events.WhiteEventException;
 
 @Aggregate
-public class Person implements Serializable {
+public class Person extends poc.domain.Aggregate<UID> implements Serializable {
     private static final long serialVersionUID = -3175513689962156083L;
 
     @AggregateIdentifier
@@ -29,7 +29,7 @@ public class Person implements Serializable {
 
     // TODO: to remove, used to get person from Axon repo load
     public void copy(final Person other) {
-        this.uid = other.getUid();
+        this.uid = other.getId();
         this.firstName = other.getFirstName();
         this.name = other.getName();
     }
@@ -52,7 +52,8 @@ public class Person implements Serializable {
         this.name = newName;
     }
 
-    public UID getUid() {
+    @Override
+    public UID getId() {
         return this.uid;
     }
 

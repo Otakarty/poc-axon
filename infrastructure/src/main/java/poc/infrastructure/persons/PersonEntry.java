@@ -21,7 +21,7 @@ public class PersonEntry {
     }
 
     public PersonEntry(final Person person) {
-        this.uid = person.getUid().toString();
+        this.uid = person.getId().toString();
         this.firstName = person.getFirstName().getValue();
         this.name = person.getName().getValue();
     }

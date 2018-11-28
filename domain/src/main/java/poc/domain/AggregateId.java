@@ -1,13 +1,12 @@
 package poc.domain;
 
-public abstract class AggregateId<V, T> {
+import java.io.Serializable;
+
+public abstract class AggregateId<V, T> implements Serializable {
+    private static final long serialVersionUID = -8023961600445571055L;
+
     public abstract V getValue();
 
     @Override
     public abstract String toString();
-
-    @SuppressWarnings("unchecked")
-    public T cast() {
-        return (T) this;
-    };
 }

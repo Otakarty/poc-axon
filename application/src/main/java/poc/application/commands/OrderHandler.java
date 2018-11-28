@@ -48,6 +48,7 @@ public class OrderHandler {
         try {
             wrapper.getCommand().applyToEventStore();
         } catch (CommandExecutionException e) {
+            this.logger.error(e.getMessage());
             // TODO: send InvalidCommand in bus
         }
     }

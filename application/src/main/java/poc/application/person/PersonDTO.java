@@ -21,7 +21,7 @@ public final class PersonDTO {
     }
 
     public PersonDTO(final Person person) {
-        this.uid = person.getUid().getValue();
+        this.uid = person.getId().getValue();
         this.name = person.getName().getValue();
         this.firstName = person.getFirstName().getValue();
     }

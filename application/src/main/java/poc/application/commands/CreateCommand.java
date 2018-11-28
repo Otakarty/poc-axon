@@ -6,12 +6,13 @@ import org.axonframework.commandhandling.model.AggregateNotFoundException;
 
 import poc.domain.AggregateId;
 
-public abstract class CreateCommand<I, T> extends Command<I, T> {
+public abstract class CreateCommand<ID extends AggregateId<?, ID>, T extends poc.domain.Aggregate<ID>>
+    extends Command<ID, T> {
     private static final long serialVersionUID = 3456485453907321523L;
     private final T aggregate;
 
-    public CreateCommand(final OrderInfo originOrder, final AggregateId<?, I> id, final T aggregate) {
-        super(originOrder, id);
+    public CreateCommand(final OrderInfo originOrder, final T aggregate) {
+        super(originOrder, aggregate.getId());
         this.aggregate = aggregate;
     }
 

@@ -25,25 +25,18 @@ public final class ChangePersonName extends UpdateCommand<UID, Person> {
         this.name = name;
     }
 
-    // public ChangePersonName(final UID uid, final Name name) {
-    // super(new OrderInfo(ServiceEnum.IHM), uid);
-    // Assert.notNull(uid, "UID is mandatory");
-    // Assert.notNull(name, "Name is mandatory");
-    // this.name = name;
-    // }
-
     public final Name getName() {
         return this.name;
     }
 
     @Override
     public CommandExecutionException exceptionToThrow(final String message, final Throwable cause) {
-        return new CannotChangeNameException(this.aggregateId.cast(), this.name, message, cause);
+        return new CannotChangeNameException(this.getAggregateId(), this.name, message, cause);
     }
 
     @Override
     public DomainEvent getDomainEvent() {
-        return new PersonNameChanged(this.commandId, this.aggregateId.cast(), this.name);
+        return new PersonNameChanged(this.commandId, this.getAggregateId(), this.name);
     }
 
     @Override

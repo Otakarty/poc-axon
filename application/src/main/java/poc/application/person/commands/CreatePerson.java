@@ -23,11 +23,11 @@ public final class CreatePerson extends CreateCommand<UID, Person> {
     private final Person person;
 
     public CreatePerson(final OrderInfo originOrder, final Person person) {
-        super(originOrder, person.getUid(), person);
-        Assert.notNull(person.getUid(), "UID is mandatory");
+        super(originOrder, person);
+        Assert.notNull(person.getId(), "UID is mandatory");
         Assert.notNull(person.getName(), "Name is mandatory");
         Assert.notNull(person.getFirstName(), "First name is mandatory");
-        this.uid = person.getUid();
+        this.uid = person.getId();
         this.person = person;
     }
 

@@ -21,6 +21,7 @@ public class PersonsRepository implements Persons {
     @Autowired
     PersonsJpaRepository jpaRepository;
 
+    // TODO: catch exception (checked or restexceptionhandler)
     private PersonEntry findEntryById(final String id) {
         return Optional
             .ofNullable(this.jpaRepository.findById(id).orElseThrow(
@@ -36,9 +37,9 @@ public class PersonsRepository implements Persons {
     @Override
     public Person add(final Person person) {
         PersonEntry savedEntry = null;
-        if (this.jpaRepository.existsById(person.getUid().toString())) {
+        if (this.jpaRepository.existsById(person.getId().toString())) {
             throw new IllegalArgumentException(
-                MessageFormat.format("Person with UID {0} already exists", person.getUid()));
+                MessageFormat.format("Person with UID {0} already exists", person.getId()));
         } else {
             savedEntry = this.jpaRepository.save(new PersonEntry(person));
         }
