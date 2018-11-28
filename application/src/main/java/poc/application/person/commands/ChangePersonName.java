@@ -13,7 +13,7 @@ import poc.domain.person.UID;
 import poc.domain.person.events.PersonNameChanged;
 import poc.domain.person.events.WhiteEventException;
 
-public final class ChangePersonName extends UpdateCommand<Person> {
+public final class ChangePersonName extends UpdateCommand<UID, Person> {
     private static final long serialVersionUID = 8622131695860114204L;
 
     private final Name name;
@@ -38,12 +38,12 @@ public final class ChangePersonName extends UpdateCommand<Person> {
 
     @Override
     public CommandExecutionException exceptionToThrow(final String message, final Throwable cause) {
-        return new CannotChangeNameException(this.aggregateId, this.name, message, cause);
+        return new CannotChangeNameException(this.aggregateId.cast(), this.name, message, cause);
     }
 
     @Override
     public DomainEvent getDomainEvent() {
-        return new PersonNameChanged(this.commandId, this.aggregateId, this.name);
+        return new PersonNameChanged(this.commandId, this.aggregateId.cast(), this.name);
     }
 
     @Override

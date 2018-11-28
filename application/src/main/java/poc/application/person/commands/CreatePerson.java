@@ -12,7 +12,7 @@ import poc.domain.person.Person;
 import poc.domain.person.UID;
 import poc.domain.person.events.PersonCreated;
 
-public final class CreatePerson extends CreateCommand<Person> {
+public final class CreatePerson extends CreateCommand<UID, Person> {
 
     private static final long serialVersionUID = -607036092546578183L;
 

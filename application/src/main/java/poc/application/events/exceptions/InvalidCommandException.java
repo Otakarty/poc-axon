@@ -10,14 +10,14 @@ import org.springframework.data.util.Pair;
 import poc.application.commands.Command;
 import poc.application.commands.OrderInfo;
 
-public class InvalidOrderException extends CommandExecutionException {
+public class InvalidCommandException extends CommandExecutionException {
 
     private static final long serialVersionUID = 1212145618029004357L;
 
     private final OrderInfo origin;
     private final Map<UUID, Pair<Command, CommandExecutionException>> inErrorCommands;
 
-    public InvalidOrderException(final OrderInfo origin,
+    public InvalidCommandException(final OrderInfo origin,
         final Map<UUID, Pair<Command, CommandExecutionException>> inErrorCommands) {
         super(MessageFormat.format("Invalid order {0}, causes: {1}", origin.getId(), inErrorCommands), null);
         this.origin = origin;

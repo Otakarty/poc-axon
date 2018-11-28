@@ -44,13 +44,18 @@ public class OrderHandler {
     @CommandHandler
     public void handle(final CommandWrapper wrapper) {
         this.logger.info("Handling command of type: " + wrapper.getCommand().getClass().getSimpleName());
-        wrapper.getCommand().applyToEventStore();
+        // TODO: try catch to send exception in bus or throw InvalidCommand for all commands when error
+        try {
+            wrapper.getCommand().applyToEventStore();
+        } catch (CommandExecutionException e) {
+            // TODO: send InvalidCommand in bus
+        }
     }
 
     @CommandHandler
     public void handle(final Order order) {
         this.logger.info("Handling Order command");
-        Map<UUID, Pair<Command<?>, CommandExecutionException>> inErrorCommands = new HashMap<>();
+        Map<UUID, Pair<Command, CommandExecutionException>> inErrorCommands = new HashMap<>();
 
         order.getCommands().stream().forEach(command -> {
             try {

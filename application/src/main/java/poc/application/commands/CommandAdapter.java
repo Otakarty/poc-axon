@@ -9,7 +9,7 @@ public final class CommandAdapter {
     private CommandAdapter() {
     }
 
-    public static CommandEntry toCommandEntry(final Command<?> command, final CommandStatus status) {
+    public static CommandEntry toCommandEntry(final Command command, final CommandStatus status) {
         CommandEntry entry = new CommandEntry();
 
         entry.setCommandId(command.getCommandId().toString());

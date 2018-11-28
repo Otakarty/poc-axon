@@ -53,7 +53,7 @@
 				<artifactId>feedback</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-		
+
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-core</artifactId>
@@ -67,6 +67,7 @@
 				<version>3.3.6</version>
 			</dependency>
 
+			<!-- https://mvnrepository.com/artifact/org.axonframework/axon-test -->
 			<dependency>
 				<groupId>org.axonframework</groupId>
 				<artifactId>axon-test</artifactId>

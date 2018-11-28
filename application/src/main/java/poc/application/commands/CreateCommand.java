@@ -4,12 +4,13 @@ import org.axonframework.commandhandling.model.Aggregate;
 import org.axonframework.commandhandling.model.AggregateLifecycle;
 import org.axonframework.commandhandling.model.AggregateNotFoundException;
 
-import poc.domain.person.UID;
+import poc.domain.AggregateId;
 
-public abstract class CreateCommand<T> extends Command<T> {
+public abstract class CreateCommand<I, T> extends Command<I, T> {
+    private static final long serialVersionUID = 3456485453907321523L;
     private final T aggregate;
 
-    public CreateCommand(final OrderInfo originOrder, final UID id, final T aggregate) {
+    public CreateCommand(final OrderInfo originOrder, final AggregateId<?, I> id, final T aggregate) {
         super(originOrder, id);
         this.aggregate = aggregate;
     }

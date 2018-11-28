@@ -3,8 +3,6 @@ package poc.application.person;
 import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 
-import org.axonframework.commandhandling.gateway.CommandGateway;
-import org.axonframework.eventsourcing.eventstore.EventStore;
 import org.axonframework.queryhandling.QueryGateway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,18 +24,10 @@ import poc.domain.person.UID;
 
 @Service
 public class PersonService {
-    @Autowired
-    private CommandGateway commandGateway;
-
-    @Autowired
-    private EventStore eventStore;
 
     @Autowired
     @Qualifier("refog")
     private Persons repository;
-
-    // @Autowired
-    // private CommandJpaRepository commandRepository;
 
     public void createPerson(final Person person) {
         OrderInfo info = new OrderInfo(ServiceEnum.IHM);

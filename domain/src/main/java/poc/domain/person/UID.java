@@ -4,7 +4,9 @@ import java.io.Serializable;
 
 import org.springframework.util.Assert;
 
-public final class UID implements Serializable {
+import poc.domain.AggregateId;
+
+public final class UID extends AggregateId<String, UID> implements Serializable {
     private static final long serialVersionUID = -2168741636320165596L;
 
     private final String value;
@@ -14,6 +16,7 @@ public final class UID implements Serializable {
         this.value = uid;
     }
 
+    @Override
     public final String getValue() {
         return this.value;
     }

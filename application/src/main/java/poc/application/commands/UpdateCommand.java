@@ -4,14 +4,14 @@ import org.axonframework.commandhandling.CommandExecutionException;
 import org.axonframework.commandhandling.model.AggregateLifecycle;
 import org.axonframework.commandhandling.model.AggregateNotFoundException;
 
-import poc.domain.person.UID;
+import poc.domain.AggregateId;
 import poc.domain.person.events.WhiteEventException;
 
-public abstract class UpdateCommand<T> extends Command<T> {
+public abstract class UpdateCommand<I, T> extends Command<I, T> {
 
     private static final long serialVersionUID = -4334780840288000812L;
 
-    public UpdateCommand(final OrderInfo originOrder, final UID id) {
+    public UpdateCommand(final OrderInfo originOrder, final AggregateId<?, I> id) {
         super(originOrder, id);
     }
 

@@ -5,10 +5,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.commandhandling.model.Repository;
-import org.axonframework.eventhandling.EventBus;
-import org.axonframework.eventsourcing.AggregateFactory;
 import org.axonframework.eventsourcing.eventstore.EventStore;
 import org.axonframework.messaging.Message;
 import org.axonframework.queryhandling.GenericQueryMessage;
@@ -47,12 +44,6 @@ public class PersonController {
 
     @Autowired
     private EventStore eventStore;
-
-    @Autowired
-    private EventBus eventBus;
-
-    @Autowired
-    private AggregateFactory<Person> personFactory;
 
     @PostMapping
     public void newPerson(@RequestBody final PersonDTO person) {
@@ -121,9 +112,6 @@ public class PersonController {
             .map(Message::getPayload).collect(Collectors.toList());
     }
 
-    @Autowired
-    private CommandGateway commandGateway;
-
     @PostMapping("/{uid}/test-im/{expectedStatus}")
     public void testIM(@PathVariable final String uid, @PathVariable final String expectedStatus) {
         OrderInfo info = new OrderInfo(ServiceEnum.IM);
@@ -133,7 +121,7 @@ public class PersonController {
         Name newName3 = new Name("NEWNEWNEW");
         Name newName4 = new Name("ERROR");
 
-        List<Command<?>> commands;
+        List<Command> commands;
         if (expectedStatus.equalsIgnoreCase("OK")) {
             commands =
                 Arrays.asList(new ChangePersonName(info, id, newName1), new ChangePersonName(info, id, newName2));

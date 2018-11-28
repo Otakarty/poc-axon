@@ -10,14 +10,14 @@ public final class Order {
     // TODO: generic id instead
     // TODO : remove on move @TargetAggregateIdentifier on order id
     // TODO: ? extends generic aggregate
-    private List<Command<?>> commands;
+    private List<Command> commands;
 
     private Class<?> aggregateType;
 
     public Order() {
     }
 
-    public Order(final OrderInfo info, final List<Command<?>> commands) {
+    public Order(final OrderInfo info, final List<Command> commands) {
         this.info = info;
         Assert.isTrue(!commands.isEmpty(), "Should contain at least one command");
         this.commands = commands;
@@ -28,7 +28,7 @@ public final class Order {
         return this.info;
     }
 
-    public final List<Command<?>> getCommands() {
+    public final List<Command> getCommands() {
         return this.commands;
     }
 

@@ -44,7 +44,7 @@ public class OrderEventListener {
             this.commandJpaRepository.findAllByOrderId(exception.getOrigin().getId().toString());
         invalidCommands.stream().forEach(command -> {
             command.setStatus(CommandStatus.FAILED.toString());
-            Pair<Command<?>, CommandExecutionException> commandInError =
+            Pair<Command, CommandExecutionException> commandInError =
                 exception.getInErrorCommands().get(UUID.fromString(command.getCommandId()));
             if (commandInError != null) {
                 command.setDetail(commandInError.getSecond().getMessage());
