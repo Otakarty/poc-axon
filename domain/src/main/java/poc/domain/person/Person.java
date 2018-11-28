@@ -40,15 +40,11 @@ public class Person extends poc.domain.Aggregate<UID> implements Serializable {
         this.firstName = builder.getFirstName();
     }
 
-    public void nameCanBeChangedWith(final Name newName) throws WhiteEventException {
+    public void changeName(final Name newName) throws WhiteEventException {
         Assert.isTrue(newName != null, "New name should not be null");
         if (this.getName().equals(newName)) {
             throw new WhiteEventException("new name is no different");
         }
-    }
-
-    public void changeName(final Name newName) throws WhiteEventException {
-        this.nameCanBeChangedWith(newName);
         this.name = newName;
     }
 

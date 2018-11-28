@@ -2,22 +2,15 @@ package poc.application.commands;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
-public class OrderInfo implements Serializable {
+public class CommandInfo implements Serializable {
     private static final long serialVersionUID = -6567393086766682750L;
-    private final UUID id;
     private final LocalDateTime dtCreation;
     private final ServiceEnum source;
 
-    public OrderInfo(final ServiceEnum source) {
-        this.id = UUID.randomUUID();
+    public CommandInfo(final ServiceEnum source) {
         this.dtCreation = LocalDateTime.now();
         this.source = source;
-    }
-
-    public final UUID getId() {
-        return this.id;
     }
 
     public final LocalDateTime getDtCreation() {
@@ -30,7 +23,7 @@ public class OrderInfo implements Serializable {
 
     @Override
     public String toString() {
-        return "OrderInfo [id=" + this.id + ", dtCreation=" + this.dtCreation + ", source=" + this.source + "]";
+        return "OrderInfo [dtCreation=" + this.dtCreation + ", source=" + this.source + "]";
     }
 
     @Override
@@ -38,7 +31,6 @@ public class OrderInfo implements Serializable {
         final int prime = 31;
         int result = 1;
         result = (prime * result) + ((this.dtCreation == null) ? 0 : this.dtCreation.hashCode());
-        result = (prime * result) + ((this.id == null) ? 0 : this.id.hashCode());
         result = (prime * result) + ((this.source == null) ? 0 : this.source.hashCode());
         return result;
     }
@@ -54,19 +46,12 @@ public class OrderInfo implements Serializable {
         if (this.getClass() != obj.getClass()) {
             return false;
         }
-        OrderInfo other = (OrderInfo) obj;
+        CommandInfo other = (CommandInfo) obj;
         if (this.dtCreation == null) {
             if (other.dtCreation != null) {
                 return false;
             }
         } else if (!this.dtCreation.equals(other.dtCreation)) {
-            return false;
-        }
-        if (this.id == null) {
-            if (other.id != null) {
-                return false;
-            }
-        } else if (!this.id.equals(other.id)) {
             return false;
         }
         if (this.source != other.source) {

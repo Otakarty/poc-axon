@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import poc.application.person.commands.crud.CreatePerson;
 import poc.application.person.commands.exceptions.CannotChangeNameException;
 import poc.application.person.commands.exceptions.CannotCreatePersonException;
 import poc.domain.person.Person;

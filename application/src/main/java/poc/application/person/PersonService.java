@@ -1,6 +1,5 @@
 package poc.application.person;
 
-import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 
 import org.axonframework.queryhandling.QueryGateway;
@@ -8,13 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import poc.application.commands.CommandInfo;
 import poc.application.commands.CommandWrapper;
-import poc.application.commands.Order;
-import poc.application.commands.OrderInfo;
 import poc.application.commands.Registry;
 import poc.application.commands.ServiceEnum;
 import poc.application.person.commands.ChangePersonName;
-import poc.application.person.commands.CreatePerson;
+import poc.application.person.commands.crud.CreatePerson;
 import poc.application.person.queries.CountTotalPersonsQuery;
 import poc.application.person.queries.FindPersonById;
 import poc.domain.person.Name;
@@ -30,15 +28,15 @@ public class PersonService {
     private Persons repository;
 
     public void createPerson(final Person person) {
-        OrderInfo info = new OrderInfo(ServiceEnum.IHM);
+        CommandInfo info = new CommandInfo(ServiceEnum.IHM);
         CreatePerson command = new CreatePerson(info, person);
         // this.commandRepository.save(toCommandEntry(command, "CREATED"));
-        Registry.getCommandGateway().send(new Order(info, Collections.singletonList(command)));
+        Registry.getCommandGateway().send(new CommandWrapper(command));
         // OrderHandler.saveAndPublishOrder(new Order(info, Collections.singletonList(command), person.getUid()));
     }
 
     public void changePersonName(final UID uid, final Name newName) {
-        OrderInfo info = new OrderInfo(ServiceEnum.IHM);
+        CommandInfo info = new CommandInfo(ServiceEnum.IHM);
         ChangePersonName command = new ChangePersonName(info, uid, newName);
         Registry.getCommandGateway().send(new CommandWrapper(command));
         // OrderHandler.saveAndPublishOrder(new Order(info, Collections.singletonList(command), uid));

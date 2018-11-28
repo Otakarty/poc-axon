@@ -13,7 +13,7 @@ public final class UID extends AggregateId<String, UID> implements Serializable 
 
     public UID(final String uid) {
         Assert.hasLength(uid, "Missing uid");
-        this.value = uid;
+        this.value = uid.toLowerCase();
     }
 
     @Override

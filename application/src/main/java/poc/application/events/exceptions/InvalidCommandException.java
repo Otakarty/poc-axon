@@ -1,35 +1,36 @@
 package poc.application.events.exceptions;
 
 import java.text.MessageFormat;
-import java.util.Map;
-import java.util.UUID;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.axonframework.commandhandling.CommandExecutionException;
-import org.springframework.data.util.Pair;
 
 import poc.application.commands.Command;
-import poc.application.commands.OrderInfo;
 
 public class InvalidCommandException extends CommandExecutionException {
 
     private static final long serialVersionUID = 1212145618029004357L;
 
-    private final OrderInfo origin;
-    private final Map<UUID, Pair<Command, CommandExecutionException>> inErrorCommands;
+    private final Command command;
 
-    public InvalidCommandException(final OrderInfo origin,
-        final Map<UUID, Pair<Command, CommandExecutionException>> inErrorCommands) {
-        super(MessageFormat.format("Invalid order {0}, causes: {1}", origin.getId(), inErrorCommands), null);
-        this.origin = origin;
-        this.inErrorCommands = inErrorCommands;
+    private final List<CommandExecutionException> exceptions;
+
+    public InvalidCommandException(final Command command, final List<CommandExecutionException> exceptions) {
+        super(MessageFormat.format("Invalid command {0}, causes: {1}", command.getCommandId(),
+            exceptions.parallelStream().map(CommandExecutionException::getMessage).collect(Collectors.toList())),
+            null);
+        this.command = command;
+        this.exceptions = exceptions;
 
     }
 
-    public final OrderInfo getOrigin() {
-        return this.origin;
+    public final Command getCommand() {
+        return this.command;
     }
 
-    public final Map<UUID, Pair<Command, CommandExecutionException>> getInErrorCommands() {
-        return this.inErrorCommands;
+    public final List<CommandExecutionException> getExceptions() {
+        return this.exceptions;
     }
+
 }

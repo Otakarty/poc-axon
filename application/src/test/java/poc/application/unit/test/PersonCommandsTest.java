@@ -18,11 +18,11 @@ import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 
-import poc.application.commands.OrderInfo;
+import poc.application.commands.CommandInfo;
 import poc.application.commands.ServiceEnum;
 import poc.application.person.commands.ChangePersonName;
-import poc.application.person.commands.CreatePerson;
 import poc.application.person.commands.PersonCommandHandler;
+import poc.application.person.commands.crud.CreatePerson;
 import poc.domain.person.FirstName;
 import poc.domain.person.Name;
 import poc.domain.person.Person;
@@ -57,7 +57,7 @@ public class PersonCommandsTest extends AbstractCommandTest {
 
     @Test
     public void create_person_command() {
-        OrderInfo info = new OrderInfo(ServiceEnum.IM);
+        CommandInfo info = new CommandInfo(ServiceEnum.IM);
         UID uid = new UID("a76764");
         Name name = new Name("DUCASSE");
         FirstName firstName = new FirstName("Romain");
@@ -72,7 +72,7 @@ public class PersonCommandsTest extends AbstractCommandTest {
 
     @Test
     public void change_person_name() {
-        OrderInfo info = new OrderInfo(ServiceEnum.IM);
+        CommandInfo info = new CommandInfo(ServiceEnum.IM);
         UID uid = new UID("a76764");
         Name name = new Name("DUCASSE");
         Name newName = new Name("SILLIARD");

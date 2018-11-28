@@ -23,9 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import poc.application.commands.Command;
-import poc.application.commands.Order;
-import poc.application.commands.OrderInfo;
-import poc.application.commands.Registry;
+import poc.application.commands.CommandInfo;
 import poc.application.commands.ServiceEnum;
 import poc.application.person.PersonDTO;
 import poc.application.person.PersonService;
@@ -114,7 +112,7 @@ public class PersonController {
 
     @PostMapping("/{uid}/test-im/{expectedStatus}")
     public void testIM(@PathVariable final String uid, @PathVariable final String expectedStatus) {
-        OrderInfo info = new OrderInfo(ServiceEnum.IM);
+        CommandInfo info = new CommandInfo(ServiceEnum.IM);
         UID id = new UID(uid);
         Name newName1 = new Name("NEW");
         Name newName2 = new Name("NEWNEW");
@@ -133,7 +131,7 @@ public class PersonController {
             throw new IllegalArgumentException("OK or KO expected");
         }
 
-        Registry.getCommandGateway().send(new Order(info, commands));
+        // Registry.getCommandGateway().send(new Order(info, commands));
         // // Not working, need to rethrow the InvalidOrder through an InvalidateOrderCommand
         // try {
         // Registry.getCommandGateway().send(new Order(info, commands));

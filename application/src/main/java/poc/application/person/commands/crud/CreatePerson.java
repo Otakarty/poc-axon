@@ -1,11 +1,11 @@
-package poc.application.person.commands;
+package poc.application.person.commands.crud;
 
 import org.axonframework.commandhandling.CommandExecutionException;
 import org.axonframework.commandhandling.TargetAggregateIdentifier;
 import org.springframework.util.Assert;
 
 import poc.application.commands.CreateCommand;
-import poc.application.commands.OrderInfo;
+import poc.application.commands.CommandInfo;
 import poc.application.person.commands.exceptions.CannotCreatePersonException;
 import poc.domain.events.DomainEvent;
 import poc.domain.person.Person;
@@ -22,7 +22,7 @@ public final class CreatePerson extends CreateCommand<UID, Person> {
 
     private final Person person;
 
-    public CreatePerson(final OrderInfo originOrder, final Person person) {
+    public CreatePerson(final CommandInfo originOrder, final Person person) {
         super(originOrder, person);
         Assert.notNull(person.getId(), "UID is mandatory");
         Assert.notNull(person.getName(), "Name is mandatory");

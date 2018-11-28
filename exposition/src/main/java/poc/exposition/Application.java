@@ -24,7 +24,7 @@ public class Application {
     @Autowired
     public void configureProcessors(final EventProcessingConfiguration eventProcessingConfiguration) {
         eventProcessingConfiguration.usingTrackingProcessors().registerTrackingEventProcessor("personsProcessor")
-            .registerTrackingEventProcessor("ordersProcessor")
+            .registerTrackingEventProcessor("commandsProcessor")
             .registerTrackingEventProcessor("feedbacksProcessor");
     }
 }

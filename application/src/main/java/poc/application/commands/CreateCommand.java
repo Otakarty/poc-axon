@@ -10,22 +10,22 @@ public abstract class CreateCommand<ID extends AggregateId<?, ID>, T extends poc
     extends Command<ID, T> {
     private static final long serialVersionUID = 3456485453907321523L;
     private final T aggregate;
+    private Boolean generateWhiteEvent;
 
-    public CreateCommand(final OrderInfo originOrder, final T aggregate) {
+    public CreateCommand(final CommandInfo originOrder, final T aggregate) {
         super(originOrder, aggregate.getId());
         this.aggregate = aggregate;
     }
 
-    @Override
-    public void verify() {
+    public void checkUserDoesNotExists() {
         // Check user not already existing
         try {
             Aggregate<T> aggregate = this.loadAggregate();
             aggregate.execute(root -> {
                 if (!root.equals(this.aggregate)) {
-                    throw this.exceptionToThrow("Aggregate already exists", null);
+                    throw this.exceptionToThrow("Different aggregate with same id already exists", null);
                 } else {
-                    this.generateWhiteEvent();
+                    this.generateWhiteEvent = true;
                 }
             });
         } catch (AggregateNotFoundException e) {
@@ -34,7 +34,8 @@ public abstract class CreateCommand<ID extends AggregateId<?, ID>, T extends poc
     }
 
     @Override
-    public void applyToEventStore() {
+    public void apply() {
+        this.checkUserDoesNotExists();
         if (this.generateWhiteEvent) {
             return;
         }

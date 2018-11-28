@@ -16,22 +16,19 @@ public abstract class Command<ID extends AggregateId<?, ID>, T extends poc.domai
     implements Serializable {
     private static final long serialVersionUID = -8528846602698939210L;
     protected final UUID commandId;
-    protected final OrderInfo originOrder;
+    protected final CommandInfo commandInfo;
     @TargetAggregateIdentifier
     protected final AggregateId<?, ID> aggregateId;
 
-    protected Boolean generateWhiteEvent;
-
-    public Command(final OrderInfo originOrder, final AggregateId<?, ID> id) {
+    public Command(final CommandInfo originOrder, final AggregateId<?, ID> id) {
         Assert.isTrue(id != null, "In order to create command, aggregate id should not be null");
-        this.originOrder = originOrder;
+        this.commandInfo = originOrder;
         this.commandId = UUID.randomUUID();
         this.aggregateId = id;
-        this.generateWhiteEvent = false;
     }
 
-    public OrderInfo getOriginOrder() {
-        return this.originOrder;
+    public CommandInfo getCommandInfo() {
+        return this.commandInfo;
     }
 
     public final ID getAggregateId() {
@@ -50,18 +47,14 @@ public abstract class Command<ID extends AggregateId<?, ID>, T extends poc.domai
      * Apply command to event store
      * @throws Exception
      */
-    public abstract void applyToEventStore() throws CommandExecutionException;
-
-    /**
-     * Verify command can be applied.
-     */
-    public abstract void verify();
+    public abstract void apply() throws CommandExecutionException;
 
     /**
      * The exception to throw if command fails.
      * @param causeMessage cause exception message
      * @return the exception
      */
+    // TODO: replace with generic exception
     protected abstract CommandExecutionException exceptionToThrow(final String causeMessage,
         final Throwable cause);
 
@@ -73,10 +66,6 @@ public abstract class Command<ID extends AggregateId<?, ID>, T extends poc.domai
 
     protected Aggregate<T> loadAggregate() {
         return Registry.getRepository(this.getAggregateType()).load(this.getAggregateId().toString());
-    }
-
-    protected void generateWhiteEvent() {
-        this.generateWhiteEvent = true;
     }
 
     /**

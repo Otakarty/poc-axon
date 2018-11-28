@@ -18,7 +18,6 @@ public final class CommandAdapter {
         entry.setCommandName(command.getCommandName());
         entry.setCommmand(SerializationUtils.serialize(command));
         entry.setStatus(status.toString());
-        entry.setOrderId(command.getOriginOrder().getId().toString());
         // entry.setCommmandArgs(command.getC);
         return entry;
     }
