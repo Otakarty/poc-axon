@@ -1,6 +1,5 @@
 package poc.application.commands;
 
-import org.axonframework.commandhandling.CommandExecutionException;
 import org.axonframework.config.ProcessingGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +17,7 @@ public class CommandHandler {
         // TODO: try catch to send exception in bus or throw InvalidCommand for all commands when error
         try {
             wrapper.getCommand().apply();
-        } catch (CommandExecutionException e) {
+        } catch (Exception e) {
             this.logger.error(e.getMessage());
             // TODO: send InvalidCommand in bus
         }

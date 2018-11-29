@@ -10,6 +10,8 @@ public interface Persons {
     // TODO: list all methods (changeName, changeFirstName...) or unique save(Person p) to handle modifications ?
     Person changeName(UID id, Name newName);
 
+    Person updateFromIngestion(UID id, IngestionPersonDpo newPersonPayload);
+
     Person updateInfo(Person p);
     // end TODO
 

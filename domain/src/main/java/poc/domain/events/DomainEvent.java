@@ -26,13 +26,6 @@ public abstract class DomainEvent {
         return this.commandId;
     }
 
-    public abstract String getEventName();
-
-    @Override
-    public String toString() {
-        return "DomainEvent [getEventName()=" + this.getEventName() + "]";
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;

@@ -1,6 +1,5 @@
 package poc.exposition.api;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -10,7 +9,6 @@ import org.axonframework.eventsourcing.eventstore.EventStore;
 import org.axonframework.messaging.Message;
 import org.axonframework.queryhandling.GenericQueryMessage;
 import org.axonframework.queryhandling.QueryBus;
-import org.axonframework.queryhandling.QueryHandler;
 import org.axonframework.queryhandling.responsetypes.ResponseTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,12 +20,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import poc.application.commands.Command;
 import poc.application.commands.CommandInfo;
+import poc.application.commands.CommandWrapper;
+import poc.application.commands.Registry;
 import poc.application.commands.ServiceEnum;
 import poc.application.person.PersonDTO;
 import poc.application.person.PersonService;
-import poc.application.person.commands.ChangePersonName;
+import poc.application.person.commands.crud.UpdatePersonFromIngestion;
+import poc.domain.NullableObject;
+import poc.domain.person.FirstName;
+import poc.domain.person.IngestionPersonDpo;
 import poc.domain.person.Name;
 import poc.domain.person.Person;
 import poc.domain.person.UID;
@@ -70,11 +72,6 @@ public class PersonController {
         return this.service.findById(new UID(uid));
     }
 
-    // @GetMapping("findbyFirstName/{firstName}")
-    // public List<PersonDTO> findPersonsByFirstName(final String firstName) {
-    // return this.service
-    // }
-
     /*********** Get user from axon repository. *************/
     // TODO: remove
     @Autowired
@@ -95,13 +92,6 @@ public class PersonController {
 
     }
 
-    @QueryHandler
-    public Person handleGetPerson(final String uid) {
-        Person p = new Person();
-        this.personsRepository.load(uid).execute(person -> p.copy(person));
-        return p;
-    }
-
     /********** End Get user from axon repository. ***********/
 
     @GetMapping("{uid}/events")
@@ -114,32 +104,21 @@ public class PersonController {
     public void testIM(@PathVariable final String uid, @PathVariable final String expectedStatus) {
         CommandInfo info = new CommandInfo(ServiceEnum.IM);
         UID id = new UID(uid);
-        Name newName1 = new Name("NEW");
-        Name newName2 = new Name("NEWNEW");
-        Name newName3 = new Name("NEWNEWNEW");
-        Name newName4 = new Name("ERROR");
 
-        List<Command> commands;
         if (expectedStatus.equalsIgnoreCase("OK")) {
-            commands =
-                Arrays.asList(new ChangePersonName(info, id, newName1), new ChangePersonName(info, id, newName2));
+            IngestionPersonDpo newPersonPayload =
+                new IngestionPersonDpo.Builder().firstName(NullableObject.of(new FirstName("Jean-Michel")))
+                    .name(NullableObject.of(new Name("POC"))).build();
+            UpdatePersonFromIngestion command = new UpdatePersonFromIngestion(info, id, newPersonPayload);
+            Registry.getCommandGateway().send(new CommandWrapper(command));
         } else if (expectedStatus.equalsIgnoreCase("KO")) {
-            commands =
-                Arrays.asList(new ChangePersonName(info, id, newName3), new ChangePersonName(info, id, newName2),
-                    new ChangePersonName(info, id, newName2), new ChangePersonName(info, id, newName4));
+            IngestionPersonDpo newPersonPayload = new IngestionPersonDpo.Builder()
+                .firstName(NullableObject.empty()).name(NullableObject.empty()).build();
+            UpdatePersonFromIngestion command = new UpdatePersonFromIngestion(info, id, newPersonPayload);
+            Registry.getCommandGateway().send(new CommandWrapper(command));
         } else {
             throw new IllegalArgumentException("OK or KO expected");
         }
-
-        // Registry.getCommandGateway().send(new Order(info, commands));
-        // // Not working, need to rethrow the InvalidOrder through an InvalidateOrderCommand
-        // try {
-        // Registry.getCommandGateway().send(new Order(info, commands));
-        // } catch (InvalidOrderException e) {
-        // this.logger.info("Publishing invalid order event");
-        // this.eventBus.publish(asEventMessage(e));
-        // }
-        // // OrderHandler.saveAndPublishOrder(new Order(info, commands, id));
     }
 
 }

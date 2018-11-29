@@ -18,6 +18,7 @@ import poc.domain.person.Person;
 import poc.domain.person.Persons;
 import poc.domain.person.events.PersonCreated;
 import poc.domain.person.events.PersonNameChanged;
+import poc.domain.person.events.PersonUpdatedFromIngestion;
 
 // Not in domain layer because of spring annotation required
 @Component
@@ -45,6 +46,12 @@ public class PersonProjection {
     protected void on(final PersonNameChanged event) {
         this.logger.info("Handling PersonNameChanged event for new refog");
         this.repository.changeName(event.getUid(), event.getName());
+    }
+
+    @EventHandler
+    protected void on(final PersonUpdatedFromIngestion event) {
+        this.logger.info("Handling PersonNameChanged event for new refog");
+        this.repository.updateFromIngestion(event.getUid(), event.getNewPersonPayload());
     }
 
     @EventHandler

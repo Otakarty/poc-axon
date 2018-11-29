@@ -29,11 +29,6 @@ public final class PersonCreated extends DomainEvent {
     }
 
     @Override
-    public String getEventName() {
-        return this.getClass().getSimpleName();
-    }
-
-    @Override
     public String toString() {
         return "PersonCreated [creation=" + this.getCreation() + ", uid=" + this.uid + ", person=" + this.person
             + "]";

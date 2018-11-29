@@ -8,6 +8,9 @@ import poc.domain.person.Name;
 import poc.domain.person.UID;
 
 public final class PersonNameChanged extends DomainEvent {
+    // TODO: duplicate field to remove
+    // Warning: if removed, could not deserialize anymore
+    // Solution: snapshot or upcast
     private final LocalDateTime creation;
     private final UID uid;
     private final Name name;
@@ -25,11 +28,6 @@ public final class PersonNameChanged extends DomainEvent {
 
     public final Name getName() {
         return this.name;
-    }
-
-    @Override
-    public String getEventName() {
-        return this.getClass().getSimpleName();
     }
 
     @Override

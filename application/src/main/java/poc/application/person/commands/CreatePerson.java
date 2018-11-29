@@ -1,4 +1,4 @@
-package poc.application.person.commands.crud;
+package poc.application.person.commands;
 
 import org.axonframework.commandhandling.CommandExecutionException;
 import org.axonframework.commandhandling.TargetAggregateIdentifier;

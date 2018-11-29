@@ -3,17 +3,21 @@ package poc.application.commands;
 import org.axonframework.commandhandling.model.Aggregate;
 import org.axonframework.commandhandling.model.AggregateLifecycle;
 import org.axonframework.commandhandling.model.AggregateNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import poc.domain.AggregateId;
 
 public abstract class CreateCommand<ID extends AggregateId<?, ID>, T extends poc.domain.Aggregate<ID>>
     extends Command<ID, T> {
     private static final long serialVersionUID = 3456485453907321523L;
-    private final T aggregate;
-    private Boolean generateWhiteEvent;
+    transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public CreateCommand(final CommandInfo originOrder, final T aggregate) {
-        super(originOrder, aggregate.getId());
+    private final T aggregate;
+    private Boolean generateWhiteEvent = false;
+
+    public CreateCommand(final CommandInfo commandInfo, final T aggregate) {
+        super(commandInfo, aggregate.getId());
         this.aggregate = aggregate;
     }
 
@@ -46,6 +50,7 @@ public abstract class CreateCommand<ID extends AggregateId<?, ID>, T extends poc
                 return this.aggregate;
             });
         } catch (Exception e) {
+            this.logger.error(e.getMessage());
             throw this.exceptionToThrow(e.getMessage(), e);
         }
     }

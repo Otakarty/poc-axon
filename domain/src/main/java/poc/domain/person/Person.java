@@ -1,6 +1,12 @@
 package poc.domain.person;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 import org.axonframework.commandhandling.model.AggregateIdentifier;
 import org.axonframework.eventsourcing.EventSourcingHandler;
@@ -9,9 +15,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
+import poc.domain.exceptions.InvalidIngestionCommandException;
+import poc.domain.exceptions.WhiteEventException;
 import poc.domain.person.events.PersonCreated;
 import poc.domain.person.events.PersonNameChanged;
-import poc.domain.person.events.WhiteEventException;
+import poc.domain.person.events.PersonUpdatedFromIngestion;
 
 @Aggregate
 public class Person extends poc.domain.Aggregate<UID> implements Serializable {
@@ -27,11 +35,11 @@ public class Person extends poc.domain.Aggregate<UID> implements Serializable {
 
     }
 
-    // TODO: to remove, used to get person from Axon repo load
-    public void copy(final Person other) {
+    private Person copy(final Person other) {
         this.uid = other.getId();
         this.firstName = other.getFirstName();
         this.name = other.getName();
+        return this;
     }
 
     public Person(final Person.Builder builder) {
@@ -48,6 +56,40 @@ public class Person extends poc.domain.Aggregate<UID> implements Serializable {
         this.name = newName;
     }
 
+    public void changeFirstName(final FirstName newFirstName) throws WhiteEventException {
+        Assert.isTrue(newFirstName != null, "New firstName should not be null");
+        if (this.getFirstName().equals(newFirstName)) {
+            throw new WhiteEventException("new firstName is no different");
+        }
+        this.firstName = newFirstName;
+    }
+
+    public void updateFromIngestion(final IngestionPersonDpo person) throws InvalidIngestionCommandException {
+        Person copy = new Person().copy(this);
+        List<Consumer<Person>> toApply = Arrays.asList(p -> p.changeFirstName(person.getFirstName().orElse(null)),
+            p -> this.changeName(person.getName().orElse(null)));
+        List<IllegalArgumentException> exceptions = new ArrayList<>();
+        AtomicInteger whiteEventsCount = new AtomicInteger();
+
+        toApply.forEach(m -> {
+            try {
+                m.accept(this);
+            } catch (IllegalArgumentException e) {
+                exceptions.add(e);
+            } catch (WhiteEventException e) {
+                whiteEventsCount.incrementAndGet();
+            }
+        });
+        if (!exceptions.isEmpty()) {
+            // Rollback
+            this.copy(copy);
+            throw new InvalidIngestionCommandException(exceptions);
+        }
+        if (whiteEventsCount.intValue() == toApply.size()) {
+            throw new WhiteEventException("Ingestion does not modify person");
+        }
+    }
+
     @Override
     public UID getId() {
         return this.uid;
@@ -62,7 +104,7 @@ public class Person extends poc.domain.Aggregate<UID> implements Serializable {
     }
 
     /******** Event Sourcing Handlers. ********/
-    Logger logger = LoggerFactory.getLogger(this.getClass());
+    transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @EventSourcingHandler
     protected void on(final PersonCreated event) {
@@ -78,16 +120,17 @@ public class Person extends poc.domain.Aggregate<UID> implements Serializable {
         this.changeName(event.getName());
     }
 
+    @EventSourcingHandler
+    protected void on(final PersonUpdatedFromIngestion event) throws InvalidIngestionCommandException {
+        this.logger.info("Event source handler on PersonUpdatedFromIngestion event");
+        this.updateFromIngestion(event.getNewPersonPayload());
+    }
+
     /****** End Event Sourcing Handlers. ******/
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = (prime * result) + ((this.firstName == null) ? 0 : this.firstName.hashCode());
-        result = (prime * result) + ((this.name == null) ? 0 : this.name.hashCode());
-        result = (prime * result) + ((this.uid == null) ? 0 : this.uid.hashCode());
-        return result;
+        return Objects.hash(this.uid, this.firstName, this.name);
     }
 
     @Override
@@ -95,35 +138,14 @@ public class Person extends poc.domain.Aggregate<UID> implements Serializable {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
+
+        if (!(obj instanceof Person)) {
             return false;
         }
-        if (this.getClass() != obj.getClass()) {
-            return false;
-        }
+
         Person other = (Person) obj;
-        if (this.firstName == null) {
-            if (other.firstName != null) {
-                return false;
-            }
-        } else if (!this.firstName.equals(other.firstName)) {
-            return false;
-        }
-        if (this.name == null) {
-            if (other.name != null) {
-                return false;
-            }
-        } else if (!this.name.equals(other.name)) {
-            return false;
-        }
-        if (this.uid == null) {
-            if (other.uid != null) {
-                return false;
-            }
-        } else if (!this.uid.equals(other.uid)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.uid, other.uid) && Objects.equals(this.name, other.name)
+            && Objects.equals(this.firstName, other.firstName);
     }
 
     public static class Builder {

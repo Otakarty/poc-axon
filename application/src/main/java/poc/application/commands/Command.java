@@ -20,9 +20,9 @@ public abstract class Command<ID extends AggregateId<?, ID>, T extends poc.domai
     @TargetAggregateIdentifier
     protected final AggregateId<?, ID> aggregateId;
 
-    public Command(final CommandInfo originOrder, final AggregateId<?, ID> id) {
+    public Command(final CommandInfo commandInfo, final AggregateId<?, ID> id) {
         Assert.isTrue(id != null, "In order to create command, aggregate id should not be null");
-        this.commandInfo = originOrder;
+        this.commandInfo = commandInfo;
         this.commandId = UUID.randomUUID();
         this.aggregateId = id;
     }

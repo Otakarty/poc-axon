@@ -1,8 +1,8 @@
-package poc.domain.person.events;
+package poc.domain.exceptions;
 
 import java.text.MessageFormat;
 
-public class WhiteEventException extends Exception {
+public class WhiteEventException extends RuntimeException {
     private static final long serialVersionUID = 1210476562238655136L;
 
     public WhiteEventException(final String cause) {
